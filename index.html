@@ -1,0 +1,3940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-visual">
+<title>twIIgs — Confirm Your Design</title>
+<meta property="og:title" content="twIIgs Presale — Confirm Your Design">
+<meta property="og:description" content="Confirm your custom twIIgs pole design for your presale order.">
+<meta property="og:image" content="https://raw.githubusercontent.com/liamweed/custom_poles2/main/preview.png">
+<meta property="og:url" content="https://liamweed.github.io/custom_poles2">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://liamweed.github.io/custom_poles2">
+<meta name="twitter:title" content="twIIgs Custom Ski Poles">
+<meta name="twitter:description" content="Design your own custom ski poles">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/liamweed/custom_poles2/main/preview.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+<script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=Yq7u24"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS
+   ══════════════════════════════════════════════ */
+:root {
+  --bg:      #FFFFFF;
+  --card:    #FFFEFC;
+  --ink:     #1A1A1A;
+  --mid:     #666;
+  --lite:    #AAA;
+  --accent:  #00798e;   /* ← SWAP ACCENT COLOR HERE */
+  --r:       10px;
+  --sh:      0 2px 12px rgba(0,0,0,0.07);
+  --shm:     0 6px 28px rgba(0,0,0,0.11);
+  --shl:     0 14px 52px rgba(0,0,0,0.18);
+  --t:       0.17s ease;
+  --nav-h:   48px;
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+}
+@media (min-width: 740px) { :root { --nav-h: 54px; } }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 400;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+/* ── Screens ── */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; }
+#s-land.active,
+#s-e-palette.active,
+#s-e-style.active,
+#s-mystery.active { min-height: 100dvh; }
+#s-cust.active { height: 100dvh; overflow: hidden; }
+/* Landing: exactly 4 cards must always fit — fixed height, never scrolls */
+#s-land.active { height: 100dvh; overflow: hidden; }
+
+/* Landing only: all text 10% smaller than its shared default */
+#s-land .nav-label      { font-size: 0.558rem; }                       /* 0.62 × 0.9 */
+#s-land .btn.sm         { font-size: 0.684rem; }                       /* 0.76 × 0.9 */
+#s-land .flow-card-label { font-size: clamp(0.81rem, 2.52vw, 1.08rem); } /* ×0.9 */
+#s-land .screen-footer  { font-size: 0.54rem; }                        /* 0.6 × 0.9 */
+/* Landing cards: a little more breathing room above the top of the poles */
+#s-land .flow-card-visual { padding-top: 24px; }
+
+/* ── Landing grid layout ──
+   Cards fill the available screen height. card-grid-3 is content-height by
+   default; on the landing we stretch the grid + cards to fill the viewport so
+   the poles run the full vertical length of each card.
+   Desktop (≥740px): 3 equal cards in one horizontal row.
+   Mobile (≤739px): 2 tall cards on top ("Choose a style" / "Build from
+   scratch") + a full-width, shorter secondary "Surprise me" button below. ── */
+#s-land #land-grid {
+  flex: 1; min-height: 0;
+  align-content: stretch;
+  grid-auto-rows: minmax(0, 1fr);
+}
+#s-land #land-grid .flow-card {
+  height: auto;
+  max-height: none;   /* lift the mobile card-grid-3 220px cap so cards fill the screen */
+  align-self: stretch;
+}
+@media (max-width: 739px) {
+  #s-land #land-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;   /* top cards fill, surprise button stays short */
+  }
+  #s-land #land-surprise-card {
+    grid-column: 1 / -1;
+    height: auto; min-height: 44px;
+    flex-direction: row; align-items: center; justify-content: center;
+    text-align: center;
+    background: transparent;
+    border: 2px solid var(--ink);
+    border-radius: 5px;
+  }
+  #s-land #land-surprise-card .flow-card-visual { display: none; }
+  #s-land #land-surprise-card .flow-card-footer { padding: 10px 12px; }
+  #s-land #land-surprise-card .flow-card-label { color: var(--ink); }
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.fade-in { animation: fadeIn 0.2s ease both; }
+
+/* ── Logo ── */
+/* The outer <svg> has no viewBox of its own (it lives on the <symbol>), so some
+   mobile browsers can't derive an intrinsic width from height:auto and render it
+   at 0 width — i.e. invisible. Pinning the aspect ratio (symbol viewBox is
+   1300×780) forces a correct width at every size, so the logo shows everywhere. */
+.logo-svg {
+  height: 44px; width: auto; aspect-ratio: 1300 / 780; display: block;
+  cursor: pointer; user-select: none; flex-shrink: 0;
+  color: var(--ink); --logo-ii: var(--ink);
+}
+
+/* ── Nav ── */
+.nav {
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px;
+  background: var(--bg);
+  border-bottom: 1.5px solid rgba(0,0,0,0.07);
+  flex-shrink: 0; z-index: 100;
+}
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600; font-size: 0.88rem; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-height: 44px; padding: 0 18px;
+  border-radius: 5px; border: 2px solid var(--ink);
+  background: var(--ink); color: #fff;
+  cursor: pointer; transition: all var(--t);
+  user-select: none; white-space: nowrap;
+  -webkit-appearance: none; touch-action: manipulation;
+  text-decoration: none;
+}
+.btn:active { transform: scale(0.96); opacity: 0.88; }
+@media (hover:hover) {
+  .btn:hover        { background: transparent; color: var(--ink); }
+  .btn.ghost:hover  { background: var(--ink); color: #fff; }
+  .btn.accent:hover { background: transparent; color: var(--accent); box-shadow: none; }
+}
+.btn.ghost  { background: transparent; color: var(--ink); }
+.btn.accent { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.18); }
+.btn.sm     { min-height: 36px; padding: 0 12px; font-size: 0.76rem; }
+.btn.lg     { min-height: 52px; padding: 0 28px; font-size: 0.95rem; }
+
+/* ══════════════════════════════════════════════
+   SHARED CARD GRID — used on landing + all entry screens
+   ══════════════════════════════════════════════ */
+.card-screen-body {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 8px 8px calc(8px + var(--safe-b));
+  min-height: 0;
+  overflow-y: auto;   /* >4 cards scroll rather than overflow off-screen */
+}
+.card-screen-hed {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1rem,3vw,1.6rem);
+  letter-spacing: 0.02em; text-transform: uppercase;
+  margin-bottom: 2px; flex-shrink: 0;
+}
+.card-screen-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.66rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite); margin-bottom: 8px; flex-shrink: 0;
+}
+
+/* Default grid: 2 columns, fills remaining height */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;   /* all cards equal height */
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+}
+@media (max-width: 380px) { .card-grid { grid-template-columns: 1fr; } }
+
+/* 3-up card grid: 1 col on mobile, 3 cols on desktop. NOT flex:1 — the grid is
+   content-height so its fixed-height cards never stretch to fill the screen.
+   ≤3 cards sit at the top; >3 wrap into more rows and card-screen-body scrolls. */
+.card-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;     /* content-height rows so each card's fixed height wins */
+  align-content: start;     /* don't stretch the row block to fill the body */
+  gap: 8px; min-height: 0;
+}
+@media (min-width: 600px) {
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* Item 2: every card in a 3-up grid (style + palette pickers) is one fixed size,
+   so pole previews and palette swatches stay identical across all cards. */
+.card-grid-3 .flow-card {
+  height: 280px;
+  align-self: start;        /* keep the fixed height even if a track is taller */
+  min-height: 0;
+}
+/* Style (pattern) picker cards are 50% taller than palette cards */
+#s-e-style .card-grid-3 .flow-card {
+  height: 420px;
+}
+
+.flow-card {
+  border-radius: 14px; overflow: hidden;
+  cursor: pointer; position: relative;
+  display: flex; flex-direction: column;
+  background: var(--card);
+  border: 1.5px solid #E8E8E8;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  touch-action: manipulation;
+  min-height: 0; /* let the grid control height so ≤4 cards always fit on screen */
+}
+.flow-card:active  { transform: translateY(-2px); box-shadow: var(--shm); }
+@media (hover:hover) { .flow-card:hover { transform: translateY(-4px); box-shadow: var(--shl); border-color: rgba(0,0,0,0.08); } }
+.flow-card.selected { border-color: var(--ink); box-shadow: var(--shm); }
+
+.flow-card-visual {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 10px 8px 6px; position: relative; overflow: hidden;
+  min-height: 0;
+}
+/* Card-preview poles: full width, centered horizontally, both poles top-aligned,
+   spaced proportionally (3% of card width) so they scale with any card size.
+   Clipped (not bled) if they ever exceed bounds. */
+.flow-card-visual .poles-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3%;
+}
+.flow-card-footer {
+  padding: 6px 12px 12px; flex-shrink: 0;
+}
+/* Style-selection cards only: name centered under the pole preview */
+.flow-card-footer.style-name {
+  padding: 4px 8px 10px; text-align: center;
+}
+.flow-card-footer.style-name .flow-card-label {
+  font-size: clamp(0.78rem, 2.4vw, 1.05rem); letter-spacing: 0.08em;
+}
+.flow-card-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+  font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink); line-height: 1.2;
+}
+
+/* Full-width CTA card (Start coloring now) */
+.flow-card-cta {
+  border-radius: 14px; overflow: hidden;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ink); color: #fff;
+  border: 2px solid var(--ink);
+  transition: transform 0.18s ease, background 0.18s ease;
+  touch-action: manipulation;
+  padding: 18px 22px;
+  margin-top: 8px;
+}
+.flow-card-cta:active { transform: scale(0.98); }
+@media (hover:hover) { .flow-card-cta:hover { background: var(--accent); border-color: var(--accent); } }
+.flow-card-cta-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(0.9rem,2.5vw,1.2rem);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.flow-card-cta-arrow { font-size: 1.4rem; }
+
+/* Screen footer */
+.screen-footer {
+  text-align: center; padding: 10px;
+  padding-bottom: calc(10px + var(--safe-b));
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.6rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--lite);
+}
+
+/* Variable palette cards (2–7 colors) — see palSqHTML().
+   --cols (set inline) = max squares in any row; every square is 1/cols of the
+   box width, so a row with fewer squares simply centers. */
+.pal-sq-stack {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; padding: 14px;
+  width: 100%; max-width: 255px;
+}
+.pal-sq-row {
+  display: flex; justify-content: center; align-items: center;
+  gap: 6px; width: 100%;
+}
+.pal-sq-row .pal-sq {
+  flex: 0 0 auto;
+  width: calc((100% - (var(--cols) - 1) * 6px) / var(--cols));
+  height: auto; aspect-ratio: 1;
+}
+/* All-colors card — cols/rows + aspect ratio are set inline from COLORS.length
+   (see palSqHTMLAll), so any color count stays a balanced square-ish grid.
+   At 16 colors this resolves to the original 4×4. */
+.pal-sq-grid-all {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  grid-template-rows: repeat(var(--rows, 4), 1fr);
+  gap: 5px;
+  padding: 14px;
+  width: 100%; max-width: 200px;
+  aspect-ratio: var(--cols, 4) / var(--rows, 4);
+}
+/* Mobile-only two-row (8+7) all-colors layout — hidden on desktop. */
+.pal-sq-rows-all { display: none; }
+.pal-sq {
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.07);
+  width: 100%; height: 100%;
+  transition: transform 0.14s;
+}
+.flow-card:hover .pal-sq { transform: scale(1.04); }
+
+/* Mystery "?" */
+.mystery-q-big {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(4rem, 14vw, 9rem);
+  color: rgba(0,0,0,0.12);
+  line-height: 1;
+  user-select: none;
+  transition: color 0.18s;
+}
+.flow-card:hover .mystery-q-big { color: rgba(0,0,0,0.22); }
+
+.poles-wrap {
+  display: flex;
+  gap: clamp(10px,3.5vw,48px);
+  align-items: flex-start;
+  justify-content: center;
+}
+.pole-col   { display: flex; flex-direction: column; align-items: center; }
+.pole-lbl   {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.58rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite); margin-bottom: 4px;
+}
+.pole-body  { display: flex; flex-direction: column; align-items: center; }
+.pole-rings { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ring-svg {
+  display: block; flex-shrink: 0;
+  transition: opacity 0.1s ease;
+  cursor: default;
+}
+.ring-svg.tap {
+  cursor: crosshair;
+  touch-action: manipulation;
+  transition: opacity 0.1s, transform 0.06s;
+}
+.ring-svg.tap:active { transform: scaleX(0.93); }
+@media (hover:hover) { .ring-svg.tap:hover { opacity: 0.78; transform: scaleX(1.06); } }
+.ring-svg.paint-preview { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.pole-shaft { border-radius: 0 0 4px 4px; background: #1E1E1E; flex-shrink: 0; }
+@keyframes affPulse {
+  0%   { transform: scaleX(1); }
+  40%  { transform: scaleX(1.09); }
+  70%  { transform: scaleX(0.96); }
+  100% { transform: scaleX(1); }
+}
+.ring-svg.pulse { animation: affPulse 0.5s ease forwards; }
+
+/* ══════════════════════════════════════════════
+   CUSTOMISER
+   ══════════════════════════════════════════════ */
+/* Slightly off-white editor surface so white rings/ledges are visible against it.
+   Overriding --bg here recolors the stage, controls panel and action bar together;
+   the save overlay lives outside #s-cust, so it stays pure white. */
+#s-cust { --bg: var(--card); background: var(--bg); }
+.cust-body {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; min-height: 0;
+}
+@media (min-width:740px) {
+  .cust-body { flex-direction: row; height: calc(100dvh - var(--nav-h)); }
+}
+.poles-stage {
+  flex: 0 0 44%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 8px 12px;
+  user-select: none;
+  /* Let touchmove paint without the browser hijacking the gesture as a scroll —
+     without this, touchmove arrives non-cancelable and drag-paint fails on mobile. */
+  touch-action: none;
+}
+@media (min-width:740px) {
+  .poles-stage {
+    flex: 0 0 44%; height: 100%;
+    padding: 24px 28px;
+    border-right: 1.5px solid rgba(0,0,0,0.08);
+  }
+}
+/* Reset-zoom button — hidden by default (only shown on mobile while zoomed, see
+   the mobile media query). Desktop never zooms, so this stays invisible there. */
+.zoom-reset-btn {
+  display: none;
+  position: absolute; top: 8px; right: 8px; z-index: 6;
+  align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--ink); color: #fff;
+  border: none; border-radius: 5px;
+  padding: 6px 10px; min-height: 30px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  touch-action: manipulation;
+}
+.zoom-reset-btn:active { transform: scale(0.95); }
+.controls-panel {
+  flex: 1; min-height: 0; min-width: 0;
+  border-top: 1.5px solid rgba(0,0,0,0.08);
+  display: flex; flex-direction: column;
+  overflow: hidden; background: var(--bg);
+}
+@media (min-width:740px) {
+  .controls-panel {
+    border-top: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+  }
+  .ctrl-mode {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .color-picker-scroll-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .color-picker-scroll-wrap .color-picker-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    padding: 14px 16px;
+    overflow: visible;
+    border-bottom: none;
+  }
+  .tools-block {
+    flex-shrink: 0;
+    border-top: 1px solid rgba(0,0,0,0.07);
+  }
+  .scratch-tools {
+    grid-template-columns: repeat(4, 1fr);
+    padding: 8px 16px 6px;
+  }
+  .cust-action-bar {
+    flex-shrink: 0;
+    border-top: 1.5px solid rgba(0,0,0,0.07);
+  }
+  .share-confirm { flex-shrink: 0; }
+}
+
+.ctrl-mode        { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.ctrl-mode.hidden { display: none; }
+
+/* ── Color picker (shared, always at top of controls) ── */
+.active-color-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.active-color-swatch {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.12); flex-shrink: 0;
+  transition: background 0.12s;
+}
+.active-color-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--mid); flex: 1;
+}
+.active-color-hint {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite);
+}
+
+.color-picker-row {
+  display: flex; align-items: center;
+  overflow-x: auto; overflow-y: hidden;
+  padding: 8px 10px; gap: 8px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.color-picker-row::-webkit-scrollbar { display: none; }
+@media (min-width:740px) {
+  .color-picker-row {
+    display: grid; grid-template-columns: repeat(6,1fr);
+    overflow-x: hidden; overflow-y: visible;
+    padding: 12px 16px; gap: 10px;
+    flex-shrink: 0;
+  }
+}
+.cpick {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; flex-shrink: 0; touch-action: manipulation;
+  transition: transform 0.1s;
+}
+.cpick:active { transform: scale(0.88); }
+@media (hover:hover) { .cpick:hover { transform: translateY(-2px); } }
+.cpick-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid transparent;
+  transition: border-color 0.12s, transform 0.12s;
+}
+.cpick.active .cpick-circle { border-color: var(--ink); transform: scale(1.12); }
+.cpick-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.52rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite); text-align: center; max-width: 40px; line-height: 1.1;
+}
+.cpick.active .cpick-name { color: var(--ink); }
+
+/* ── Unlock toggle ── */
+.ctrl-toggles {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.toggle-pill {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  background: none; border: 1.5px solid rgba(0,0,0,0.13); border-radius: 20px;
+  padding: 3px 12px; cursor: pointer; color: var(--mid);
+  transition: all var(--t); touch-action: manipulation; min-height: 28px;
+}
+.toggle-pill:active { background: var(--ink); color: #fff; border-color: var(--ink); }
+@media (hover:hover) { .toggle-pill:hover { background: var(--ink); color: #fff; border-color: var(--ink); } }
+.toggle-pill.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* ── Ring info row ── */
+.ring-info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 10px; min-height: 34px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+.ring-info-row.hidden { display: none; }
+.ring-info-lbl {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.64rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--mid);
+}
+.ring-info-lbl .at-max { color: var(--ink); font-weight: 800; }
+.ring-nav-row {
+  display: flex; align-items: center; gap: 4px;
+}
+.ring-nav-btn {
+  width: 28px; height: 28px; border-radius: 4px;
+  background: none; border: 1.5px solid rgba(0,0,0,0.13);
+  cursor: pointer; font-size: 1rem; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t); touch-action: manipulation;
+}
+.ring-nav-btn:active { background: var(--ink); color: #fff; }
+.ring-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.btn.type-toggle {
+  min-height: 28px; padding: 0 10px; font-size: 0.66rem; border-width: 1.5px;
+  touch-action: manipulation;
+}
+.btn.make-ledge  { border-color: var(--accent); color: var(--accent); background: transparent; }
+.btn.make-ledge:active { background: var(--accent); color: #fff; }
+.btn.make-ring   { border-color: var(--mid); color: var(--mid); background: transparent; }
+.btn.make-ring:active  { background: var(--mid); color: #fff; }
+@media (hover:hover) {
+  .btn.make-ledge:hover { background: var(--accent); color: #fff; }
+  .btn.make-ring:hover  { background: var(--mid); color: #fff; }
+}
+
+/* ── Color slots (slot mode) ── */
+.slot-row {
+  display: flex; align-items: stretch; gap: 6px;
+  overflow-x: auto; overflow-y: hidden;
+  padding: 7px 10px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.slot-row::-webkit-scrollbar { display: none; }
+.slot-chip {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: none; border: 2px solid transparent; border-radius: 8px;
+  padding: 4px 8px; cursor: pointer; flex-shrink: 0; min-width: 60px;
+  transition: border-color 0.12s, background 0.12s, transform 0.1s; touch-action: manipulation;
+}
+.slot-chip:active { transform: scale(0.95); }
+@media (hover:hover) { .slot-chip:hover { background: rgba(0,0,0,0.04); } }
+.slot-chip.active { border-color: var(--ink); background: rgba(0,0,0,0.04); }
+.slot-chip-sw {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.12);
+}
+.slot-chip-lbl {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.54rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--mid); text-align: center; line-height: 1.1; max-width: 64px;
+}
+.slot-chip.active .slot-chip-lbl { color: var(--ink); }
+/* Active-slot rings: no box — a slight size bump + a soft breathing glow */
+.ring-svg.slot-hl { transform: scaleX(1.08); animation: slotGlow 1.5s ease-in-out infinite; }
+@keyframes slotGlow {
+  0%,100% { filter: drop-shadow(0 0 0 rgba(61,107,74,0)); }
+  50%     { filter: drop-shadow(0 0 4px rgba(61,107,74,0.6)); }
+}
+
+/* Color picker scroll wrap — normal block on mobile, fills remaining space on desktop */
+.color-picker-scroll-wrap { flex-shrink: 0; }
+@media (min-width:740px) {
+  .color-picker-scroll-wrap {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+}
+
+/* Full color set in play (not constrained to a palette).
+   Mobile: keep the default horizontal-scroll row (no override here).
+   Desktop: lay all 16 colors out as a 4×4 grid that fills the panel without
+   scrolling — swatches/names shrink a touch so four rows fit comfortably. */
+@media (min-width:740px) {
+  .color-picker-scroll-wrap.all-colors {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .color-picker-scroll-wrap.all-colors .color-picker-row {
+    display: grid;
+    /* Column count set inline from COLORS.length (see buildColorPicker); rows fill
+       automatically. 16 colors → 4 cols (4×4), unchanged. */
+    grid-template-columns: repeat(var(--allcols, 4), 1fr);
+    grid-auto-rows: 1fr;
+    align-content: space-evenly;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px;
+    flex: 1; min-height: 100%;
+    overflow: visible;
+    border-bottom: none;
+  }
+  .color-picker-scroll-wrap.all-colors .cpick-circle {
+    width: clamp(34px, 8vw, 46px);
+    height: clamp(34px, 8vw, 46px);
+  }
+  .color-picker-scroll-wrap.all-colors .cpick-name {
+    font-size: 0.6rem;
+    max-width: 64px;
+  }
+}
+
+/* Constrained palette: same big swatches as all-colors, but split into 3 centered
+   rows (remainder goes to the middle row) instead of a fixed grid. */
+.color-picker-scroll-wrap.palette-rows {
+  flex: 1; min-height: 0; overflow-y: auto;
+}
+.color-picker-scroll-wrap.palette-rows .color-picker-row {
+  display: flex; flex-direction: column;
+  justify-content: space-evenly;
+  gap: 12px; padding: 16px 12px;
+  min-height: 100%;
+  overflow: visible; border-bottom: none;
+}
+.color-picker-scroll-wrap.palette-rows .cpick-row {
+  display: flex; justify-content: center; align-items: center;
+  gap: 18px;
+}
+.color-picker-scroll-wrap.palette-rows .cpick-circle {
+  width: clamp(44px, 13vw, 60px);
+  height: clamp(44px, 13vw, 60px);
+}
+.color-picker-scroll-wrap.palette-rows .cpick-name {
+  font-size: 0.72rem;
+  max-width: 72px;
+}
+
+/* ── Ledge brush panel (Adjust Ledges mode replaces the color picker) ── */
+.ledge-brush-panel {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; padding: 18px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+@media (min-width:740px) { .ledge-brush-panel { flex: 1; min-height: 0; } }
+.ledge-brush-hint {
+  font-family: 'Plus Jakarta Sans',sans-serif; font-size: 0.66rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--lite); text-align: center;
+}
+.ledge-brush-opts { display: flex; gap: 22px; align-items: flex-end; justify-content: center; }
+.ledge-brush-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: none; border: 2px solid rgba(0,0,0,0.12); border-radius: 12px;
+  padding: 14px 20px; cursor: pointer; transition: all var(--t);
+  touch-action: manipulation; min-width: 100px;
+}
+.ledge-brush-opt:active { transform: scale(0.96); }
+@media (hover:hover) { .ledge-brush-opt:hover { border-color: rgba(0,0,0,0.3); } }
+.ledge-brush-opt.active { border-color: var(--ink); background: rgba(0,0,0,0.04); box-shadow: var(--sh); }
+.ledge-brush-shape { display: flex; align-items: center; justify-content: center; height: 34px; }
+.ledge-brush-lbl {
+  font-family: 'Plus Jakarta Sans',sans-serif; font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid);
+}
+.ledge-brush-opt.active .ledge-brush-lbl { color: var(--ink); }
+.ledge-brush-count {
+  font-family: 'Plus Jakarta Sans',sans-serif; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid);
+}
+.ledge-brush-count .lc-num { color: var(--ink); }
+.ledge-spacing-learn {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: 'Plus Jakarta Sans',sans-serif; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--lite);
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.ledge-brush-count.flash { animation: ledgeLimitFlash 0.45s ease 0s 2; }
+@keyframes ledgeLimitFlash {
+  0%,100% { color: var(--mid); transform: scale(1); }
+  50%     { color: #ED0039; transform: scale(1.18); }
+}
+
+/* Tools block — normal flow on mobile */
+.tools-block { flex-shrink: 0; }
+
+/* Secondary "More tools" toolbar */
+.more-tools-bar { border-top: 1px solid rgba(0,0,0,0.06); }
+
+/* ── Tools ── */
+.scratch-tools {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5px; padding: 6px 10px 4px; flex-shrink: 0;
+}
+@media (min-width:740px) {
+  .scratch-tools { grid-template-columns: repeat(4,1fr); padding: 8px 16px 6px; }
+}
+/* Main toolbar: all tools incl. the "More tools" toggle in a single
+   equal-width flex row (mobile + desktop). */
+.scratch-tools.main-tools {
+  display: flex;
+  gap: 4px;
+}
+.scratch-tools.main-tools .btn.tool {
+  flex: 1 1 0; min-width: 0;
+  padding: 0 3px;
+  font-size: 0.58rem;
+  letter-spacing: 0.02em;
+}
+@media (min-width:740px) {
+  .scratch-tools.main-tools .btn.tool { font-size: 0.64rem; padding: 0 5px; letter-spacing: 0.04em; }
+}
+.btn.tool {
+  min-height: 34px; padding: 0 8px; font-size: 0.68rem;
+  border-width: 1.5px; touch-action: manipulation;
+}
+.btn.tool:active    { background: var(--ink); color: #fff; }
+@media (hover:hover) { .btn.tool:hover { background: var(--ink); color: #fff; } }
+.btn.tool:disabled  { opacity: 0.28; cursor: not-allowed; }
+.btn.tool:disabled:active { background: transparent; color: var(--ink); }
+/* "All One" pending — waiting for a color pick to fill every ring */
+.btn.tool.pending { background: var(--accent); border-color: var(--accent); color:#fff; animation: aoPulse 1s ease-in-out infinite; }
+@keyframes aoPulse { 0%,100%{ opacity:1; } 50%{ opacity:0.55; } }
+/* Sticky-ON tool (Fill) — clear filled/inverted accent state */
+.btn.tool.on { background: var(--accent); border-color: var(--accent); color:#fff; }
+.btn.tool.on:active { background: var(--accent); color:#fff; }
+@media (hover:hover) { .btn.tool.on:hover { background: var(--accent); border-color: var(--accent); color:#fff; } }
+
+/* ── Action bar (Order / Save / Share) ── */
+.cust-action-bar {
+  display: flex; gap: 6px; padding: 8px 10px;
+  padding-bottom: calc(8px + var(--safe-b));
+  border-top: 1.5px solid rgba(0,0,0,0.07); flex-shrink: 0;
+  background: var(--bg);
+}
+.cust-action-bar .btn { min-height: 44px; font-size: 0.76rem; padding: 0 10px; }
+.cust-action-bar .btn.share { flex: 1; }     /* smallest, left */
+.cust-action-bar .btn.save  { flex: 1.5; }   /* medium, middle */
+.cust-action-bar .btn.order { flex: 3; font-size: 0.82rem; }  /* largest, right — most prominent */
+.share-confirm {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+  text-align: center; padding: 3px 0; flex-shrink: 0;
+  max-height: 0; overflow: hidden; transition: max-height 0.2s ease, opacity 0.2s ease;
+  opacity: 0;
+}
+.share-confirm.show { max-height: 24px; opacity: 1; }
+
+/* ══════════════════════════════════════════════
+   MYSTERY
+   ══════════════════════════════════════════════ */
+#s-mystery { background: var(--bg); color: var(--ink); }
+.mystery-body {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px 22px calc(36px + var(--safe-b));
+}
+.mystery-h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.3rem,4vw,2.4rem);
+  letter-spacing: 0.02em; text-transform: uppercase;
+  line-height: 1.05; margin-bottom: 36px;
+}
+.mystery-p {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--mid); max-width: 320px; line-height: 1.55; margin-bottom: 28px;
+}
+.mystery-ctas { display: flex; flex-direction: column; align-items: center; gap: 12px; width: min(320px, 100%); }
+.mystery-ctas .btn.lg { width: 100%; }
+.mystery-comment {
+  width: 100%; box-sizing: border-box;
+  min-height: 150px; resize: vertical;
+  border: 1.5px solid #E8E8E8; border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: var(--ink);
+}
+.mystery-comment::placeholder { color: var(--mid); }
+.myst-skip {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--lite); padding: 10px; min-height: 44px; touch-action: manipulation;
+}
+@media (hover:hover) { .myst-skip:hover { color: var(--mid); } }
+
+/* ══════════════════════════════════════════════
+   SAVE OVERLAY
+   ══════════════════════════════════════════════ */
+/* Presale form: invalid-field highlight */
+.ov-email-input.input-error { border-color: #ED0039; }
+
+.ov {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.42); z-index: 300;
+  align-items: flex-end; justify-content: center;
+}
+.ov.open { display: flex; }
+.ov-box {
+  background: var(--bg); border-radius: 18px 18px 0 0;
+  padding: 22px 18px calc(28px + var(--safe-b)); width: 100%; max-width: 520px;
+  box-shadow: var(--shl);
+  animation: sheetUp 0.26s cubic-bezier(0.32,0.72,0,1) both;
+  max-height: 88dvh; overflow-y: auto;
+}
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.ov-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 16px; }
+.ov-title  { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 3px; }
+.ov-sub    { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lite); margin-bottom: 14px; }
+.ov-poles  { display: flex; justify-content: center; margin-bottom: 16px; background: var(--card); border-radius: 10px; padding: 12px; }
+.ov-lbl    { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lite); margin-bottom: 7px; }
+.ov-email-row { display: flex; gap: 7px; margin-bottom: 8px; }
+.ov-email-input {
+  flex: 1; padding: 0 14px; height: 46px; border-radius: 6px;
+  border: 2px solid rgba(0,0,0,0.12); background: var(--bg);
+  font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ink);
+  font-size: max(16px,1rem); transition: border-color var(--t); outline: none;
+}
+.ov-email-input:focus { border-color: var(--ink); }
+.ov-email-input::placeholder { color: var(--lite); }
+.ov-confirm { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); opacity: 0; text-align: center; margin-top: 6px; transition: opacity var(--t); }
+.ov-confirm.show { opacity: 1; }
+.ov-spam { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lite); opacity: 0; text-align: center; margin-top: 4px; transition: opacity var(--t); }
+.ov-confirm.show + .ov-spam { opacity: 1; }
+.save-popup {
+  display: none; position: fixed; inset: 0; z-index: 10000;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5);
+  animation: savePopFade 0.2s ease;
+}
+.save-popup.open { display: flex; }
+@keyframes savePopFade { from { opacity: 0; } to { opacity: 1; } }
+.save-popup-box {
+  position: relative; background: #fff; border-radius: 12px;
+  padding: 32px; max-width: 320px; width: calc(100% - 40px);
+  text-align: center; box-shadow: var(--shl);
+}
+.save-popup-check {
+  font-size: 2.6rem; line-height: 1; color: var(--accent); margin-bottom: 12px;
+}
+.save-popup-title {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.4rem;
+  letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink);
+  margin-bottom: 10px;
+}
+.save-popup-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+  letter-spacing: 0.03em; color: var(--mid); line-height: 1.4;
+}
+.save-popup-x {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.4rem; line-height: 1; color: var(--lite);
+}
+@media (hover:hover) { .save-popup-x:hover { color: var(--ink); } }
+.spacing-popup {
+  display: none; position: fixed; inset: 0; z-index: 10000;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5);
+  animation: savePopFade 0.2s ease;
+}
+.spacing-popup.open { display: flex; }
+.spacing-popup-box {
+  position: relative; background: #fff; border-radius: 12px;
+  padding: 28px 24px; max-width: 320px; width: 90%;
+  box-shadow: var(--shl);
+}
+.spacing-popup-text {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem;
+  color: var(--ink); line-height: 1.65; margin: 0 0 12px;
+}
+.spacing-popup-text:last-child { margin-bottom: 0; }
+@media (min-width:740px) {
+  .ov { align-items: center; padding: 20px; }
+  .ov-box { border-radius: 18px; padding-bottom: 32px; }
+}
+
+/* ══════════════════════════════════════════════
+   DESKTOP RECOMMENDATION MODAL (item 1 — shown once per session
+   via JS on load when width < 740px)
+   ══════════════════════════════════════════════ */
+.desktop-prompt {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.85);
+  align-items: center; justify-content: center;
+  padding: 20px;
+  animation: savePopFade 0.2s ease;
+}
+.desktop-prompt.show { display: flex; }
+.desktop-prompt-card {
+  background: #fff; border-radius: 16px;
+  padding: 32px 24px; max-width: 320px; width: 90%;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; box-shadow: var(--shl);
+}
+.desktop-prompt-logo {
+  height: 40px; margin-bottom: 20px;
+  color: #000; --logo-ii: #000;
+}
+.desktop-prompt-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem; color: var(--mid); line-height: 1.6;
+  margin-bottom: 24px;
+}
+.desktop-prompt-btn {
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600; font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 5px;
+  padding: 14px 16px; min-height: 48px; cursor: pointer;
+  touch-action: manipulation;
+}
+.desktop-prompt-btn:active { transform: scale(0.97); }
+
+/* ══════════════════════════════════════════════
+   MOBILE FIXES — all scoped to phones (≤739px). Desktop is untouched.
+   ══════════════════════════════════════════════ */
+@media (max-width: 739px) {
+
+  /* ── Item 1: flexbox column layout — controls take exactly what they need,
+     poles get the rest. #s-cust is a full-height flex column; .cust-body grows
+     to fill below the nav; .controls-panel is content-sized (flex-shrink:0) and
+     .poles-stage (flex:1) absorbs everything left over. Fully automatic: more
+     control rows → shorter poles, fewer rows → taller poles. ── */
+  #s-cust.active {
+    height: 100dvh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .cust-body {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  /* poles-stage fills the leftover space (flex:1, min-height:0) with no height
+     of its own — no fixed/min/max/percentage height, no bottom padding.
+     getDynSz() sizes the rings to fit this height, and overflow:visible is the
+     safety net so nothing clips even if the calculation is slightly off. */
+  .poles-stage {
+    flex: 1; min-height: 0; overflow: visible;
+    position: relative;            /* anchors the absolutely-placed zoom-reset btn */
+    padding: 0 10px;
+  }
+  /* Item 5: while zoomed in (scale > 1) the stage scrolls so every ring is
+     reachable by panning; the .zoomed class is toggled in applyZoom(). */
+  .poles-stage.zoomed { overflow: auto; }
+  /* Item 4: no margin on the wrap; keep room for both poles + their gap so
+     neither pole is squeezed and rings render at full width. */
+  .poles-stage .poles-wrap {
+    margin: 0;
+    min-width: min-content;
+  }
+  /* Controls take exactly their content height — nothing more. Must reset the
+     base `flex:1` fully (flex:0 0 auto): keeping flex-grow:1 made the panel
+     swallow the space the fixed-height poles-stage left, showing as a gray band
+     below the poles AND feeding a stale (inflated) height back into
+     setPolesStageHeight(), which locked the layout at its tallest state. */
+  .controls-panel {
+    flex: 0 0 auto;
+    height: auto;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;     /* pin the toolbar + action bar to the bottom */
+    overflow: visible;
+  }
+  /* Bottom-up stacking order inside the controls panel:
+     action-bar (very bottom) → share-confirm → controls/toolbar block. */
+  .controls-panel > .ctrl-mode        { order: 1; }
+  .controls-panel > .share-confirm    { order: 2; }
+  .controls-panel > .cust-action-bar  { order: 3; }
+  .ctrl-mode {
+    flex: 0 0 auto; min-height: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  /* Inside the tools block, the expanded "More tools" bar sits ABOVE the main
+     toolbar, so bottom-up reads: main toolbar → more-tools → color picker. */
+  .tools-block {
+    display: flex; flex-direction: column;
+  }
+  .tools-block > #pattern-swap-panel       { order: 1; }
+  .tools-block > .more-tools-bar           { order: 2; }
+  .tools-block > .scratch-tools.main-tools { order: 3; }
+
+  /* Every toolbar section keeps its natural height — nothing grows or overlaps */
+  .active-color-bar,
+  .slot-row,
+  .ctrl-toggles,
+  .ring-info-row,
+  .ledge-brush-panel,
+  .tools-block,
+  .more-tools-bar,
+  .cust-action-bar,
+  .share-confirm { flex-shrink: 0; }
+
+  /* ── Item 5: explicit max-heights so every section stacks cleanly, no overlap ── */
+  .active-color-bar             { max-height: 44px; }
+  .ctrl-toggles                 { max-height: 40px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
+  .ring-info-row                { max-height: 38px; }
+  .scratch-tools.main-tools     { max-height: 44px; }
+  .more-tools-bar .scratch-tools{ max-height: 44px; }
+  /* Action bar flush to the very bottom: no gap/margin below it, only the
+     home-indicator safe-area inset as bottom padding. No height cap so the
+     safe-area padding can't clip the buttons on notched phones. */
+  .cust-action-bar {
+    max-height: none; margin-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* Item 3: panel expands to fit all content — no max-height cap, height auto, and
+     overflow visible so the hint (top) and LEDGES x/6 counter + learn link (bottom)
+     aren't clipped; smaller hint text so it fits without wrapping. */
+  .ledge-brush-panel {
+    height: auto; max-height: none;
+    gap: 8px; padding: 10px 12px;
+    padding-top: 10px; padding-bottom: 10px;
+    overflow: visible;
+  }
+  .ledge-brush-hint             { font-size: 0.6rem; }
+  .ledge-spacing-learn          { margin-top: 6px; }
+  /* Shorter shape-selector cards on mobile — smaller icons, RING/LEDGE labels kept
+     below, cards still side by side, and the "LEDGES 0/6" counter stays visible. */
+  .ledge-brush-opt              { max-height: 80px; padding: 8px 14px; gap: 4px; min-width: 0; }
+  .ledge-brush-shape            { height: auto; }
+  .ledge-brush-shape .ring-svg  { max-width: 40px; height: auto; }
+  .ledge-brush-lbl              { font-size: 0.72rem; }
+
+  /* ── Item 3: reset-zoom button — only visible while zoomed in ── */
+  .poles-stage .zoom-reset-btn        { display: none; }
+  .poles-stage.zoomed .zoom-reset-btn { display: inline-flex; }
+
+  /* ── Items 2 & 3: color picker is the ONLY scrollable region — always a single
+     horizontal row, whether 3, 4 or 16 colours are showing (never wraps) ── */
+  .color-picker-scroll-wrap,
+  .color-picker-scroll-wrap.palette-rows,
+  .color-picker-scroll-wrap.all-colors {
+    /* Height hugs the single row of colour circles exactly — no fixed/min/max
+       height, so the toolbar sits flush beneath it with no floating dead space. */
+    flex: 0 0 auto;
+    height: auto; min-height: 0; max-height: none;
+    display: flex; align-items: center;
+    overflow-x: auto; overflow-y: hidden;
+  }
+  .color-picker-scroll-wrap .color-picker-row,
+  .color-picker-scroll-wrap.palette-rows .color-picker-row,
+  .color-picker-scroll-wrap.all-colors .color-picker-row {
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    align-items: center; justify-content: flex-start;
+    flex: 0 0 auto;            /* keep natural width so the wrap scrolls, not shrinks */
+    gap: 6px; padding: 6px 10px; min-height: 0;
+    overflow: visible;
+  }
+  /* Palette mode wraps colours in .cpick-row groups; flatten them so every colour
+     is a single item in the one horizontal row. */
+  .color-picker-scroll-wrap .cpick-row { display: contents; }
+  .color-picker-scroll-wrap .cpick { flex: 0 0 56px; width: 56px; }
+  .color-picker-scroll-wrap .cpick-circle,
+  .color-picker-scroll-wrap.palette-rows .cpick-circle,
+  .color-picker-scroll-wrap.all-colors .cpick-circle {
+    width: 36px; height: 36px;
+  }
+  /* Item 4: no ellipsis truncation — long names like "Raspberry" fit on one line
+     at 0.48rem within 56px, and wrap to two centered lines only if they still don't. */
+  .color-picker-scroll-wrap .cpick-name,
+  .color-picker-scroll-wrap.palette-rows .cpick-name,
+  .color-picker-scroll-wrap.all-colors .cpick-name {
+    font-size: 0.48rem;
+    max-width: 56px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: center;
+  }
+
+  /* ── Item 7: slot mode — compact colour-only swatches (no labels) in a row
+     above the picker, so both the swatches and the picker stay visible ── */
+  .slot-row   { gap: 6px; padding: 6px 10px; max-height: 48px; overflow-x: auto; overflow-y: hidden; }
+  .slot-chip  { min-width: 0; padding: 2px; gap: 0; }
+  .slot-chip-sw  { width: 32px; height: 32px; }
+  .slot-chip-lbl { display: none; }
+
+  /* ── Item 8: main toolbar + more-tools — equal 5-column grids, matching button
+     size, no overlap and no wrap ── */
+  .scratch-tools.main-tools,
+  .more-tools-bar .scratch-tools {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  .scratch-tools.main-tools .btn.tool,
+  .more-tools-bar .scratch-tools .btn.tool {
+    min-width: 0;
+    min-height: 38px;
+    /* Item 1: smaller text + tighter tracking so no toolbar label clips or hugs the
+       button edge (Undo … Invert Colors). Height + padding unchanged. */
+    font-size: 0.55rem;
+    letter-spacing: 0.03em;
+    padding: 0 6px;
+    overflow: hidden;
+  }
+  /* "Fewer tools ▴" is longer than "More tools ▾" — shrink only that label so it
+     doesn't clip (class toggled in toggleMoreTools). */
+  .scratch-tools.main-tools .btn.tool.more-tools-toggle.showing-fewer {
+    font-size: 0.48rem;
+  }
+
+  /* ── Item 4: exactly 2px uniform ring/ledge spacing everywhere on mobile.
+     !important overrides the inline gap card previews set, so landing & picker
+     poles get the same even 2px spacing as the editor. Desktop keeps its own
+     dynamic gap (this rule is mobile-only). ── */
+  .pole-rings { gap: 1px !important; overflow: visible; }
+  .pole-rings .ring-svg { margin: 0 !important; padding: 0 !important; }
+
+  /* ── Palette picker swatches centered (kept) ── */
+  #s-e-palette .flow-card-visual {
+    align-items: center; justify-content: center;
+  }
+
+  /* ── Style picker cards — 2 per row on mobile ── */
+  #s-e-style .card-grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ── Item 2 (mobile): one fixed card size for every 3-up grid card so style
+     pole previews and palette swatches stay identical; >3 cards scroll. ── */
+  .card-grid-3 .flow-card { height: 38vw; max-height: 220px; }
+  /* Style picker: cards taller so the pole previews read bigger. Mobile-only. */
+  #s-e-style .card-grid-3 .flow-card { height: 85.5vw; max-height: 495px; }
+
+  /* ── Item 6: "Use all colours" — mobile uses an explicit 8+7 two-row layout
+     instead of the desktop square-ish grid. ── */
+  .pal-sq-grid-all { display: none !important; }
+  .pal-sq-rows-all {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px;
+  }
+  .pal-sq-mrow {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+  }
+  .pal-sq-rows-all .pal-sq {
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   MAKE YOUR OWN PALETTE
+   ══════════════════════════════════════════════ */
+/* "Make your own palette" card visual — a large centered plus, styled like the
+   mystery "?" card so it matches the rest of the palette-picker grid. */
+.cp-plus-icon {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 12vw, 6rem);
+  color: rgba(0,0,0,0.22);
+  line-height: 1; user-select: none;
+  transition: color 0.18s;
+}
+.flow-card:hover .cp-plus-icon { color: rgba(0,0,0,0.34); }
+
+/* Full-viewport flex column: color grid on top, palette slots + Next below. */
+#s-custom-palette.active { height: 100dvh; overflow: hidden; }
+.cp-body {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  padding: 8px 12px calc(8px + var(--safe-b));
+}
+/* TOP — heading + color grid; all 15 colors fit at once, never scrolls */
+.cp-top {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.cp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+  padding: 13px 4px;
+  align-content: start;
+}
+.cp-swatch {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding-bottom: 4px;
+  cursor: pointer; touch-action: manipulation;
+  transition: transform 0.1s;
+}
+.cp-swatch:active { transform: scale(0.9); }
+.cp-swatch-circle {
+  width: clamp(43px, 13.5vw, 65px);
+  height: clamp(43px, 13.5vw, 65px);
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.08);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.cp-swatch.selected .cp-swatch-circle { transform: scale(1.06); }
+.cp-swatch-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.58rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lite); text-align: center; line-height: 1.1; max-width: 64px;
+}
+.cp-swatch.selected .cp-swatch-name { color: var(--ink); }
+
+/* BOTTOM — palette slots + Next button. Content-sized with tight padding/gaps so
+   the section stays compact; the color grid above takes the freed space. Slot,
+   label and button sizes are unchanged. */
+.cp-bottom {
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+  gap: 9px; padding-top: 8px; padding-bottom: 8px;
+  border-top: 1.5px solid rgba(0,0,0,0.08);
+}
+/* "Your palette" label — larger/bolder than the shared card sub-heading, scoped
+   to this screen only. */
+#s-custom-palette .card-screen-sub {
+  color: #000000;
+  font-size: 1rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.cp-slot-row {
+  display: flex; align-items: center; gap: 8px;
+  flex: 0 0 auto;
+  overflow-x: auto; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.cp-slot-row::-webkit-scrollbar { display: none; }
+/* Slots sized so a full row of 6 fills the available width edge-to-edge:
+   width = (100vw − body padding 24px − 5 gaps × 8px) / 6 = (100vw − 64px) / 6.
+   Capped at 80px so desktop slots stay ~80px. aspect-ratio keeps them square. */
+.cp-slot, .cp-slot-add {
+  width: min(80px, calc((100vw - 64px) / 6));
+  height: auto; aspect-ratio: 1;
+  border-radius: 10px; flex-shrink: 0;
+}
+.cp-slot { padding: 0; }
+.cp-slot.empty { border: 2px dashed rgba(0,0,0,0.25); background: transparent; }
+.cp-slot.filled {
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer; box-shadow: var(--sh);
+  transition: transform 0.1s;
+}
+.cp-slot.filled:active { transform: scale(0.92); }
+.cp-slot-add {
+  border: 2px solid rgba(0,0,0,0.2); background: transparent;
+  font-size: 1.7rem; font-weight: 300; line-height: 1; color: var(--mid);
+  cursor: pointer; touch-action: manipulation;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color var(--t), color var(--t);
+}
+.cp-slot-add:active { transform: scale(0.92); }
+@media (hover:hover) { .cp-slot-add:hover { border-color: var(--ink); color: var(--ink); } }
+.cp-next { width: 100%; flex-shrink: 0; min-height: 52px; font-size: 1rem; }
+.cp-next:disabled {
+  opacity: 0.4; box-shadow: none;
+  cursor: not-allowed; pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   TOAST NOTIFICATION
+   ══════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: #1A1A1A;
+  color: #fff;
+  border-radius: 12px;
+  padding: 22px 40px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 1.6rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#toast.show {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+/* Item 2: mobile — single-line, smaller toast, kept centered in the middle of
+   the page (inherits the base top:50% / translate(-50%,-50%) centering). */
+@media (max-width: 739px) {
+  #toast {
+    white-space: nowrap;
+    font-size: 1.275rem;
+    padding: 12px 30px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOAST NOTIFICATION ═══════════ -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ═══════════ DESKTOP RECOMMENDATION MODAL (item 1) ═══════════ -->
+<div id="desktop-prompt" class="desktop-prompt" role="dialog" aria-modal="true" aria-label="Display recommendation">
+  <div class="desktop-prompt-card">
+    <svg class="logo-svg desktop-prompt-logo" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+    <p class="desktop-prompt-text">For the best designing experience, use this tool on a laptop or desktop.</p>
+    <button class="desktop-prompt-btn" onclick="dismissMobileWarning()">Got it</button>
+  </div>
+</div>
+
+<!-- ═══════════ LOGO SVG SYMBOL ═══════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="logo-sym" viewBox="101 324 1300 780">
+<defs>
+<clipPath id="lg-c18"><rect x="0" width="1300" y="0" height="780"/></clipPath>
+<clipPath id="lg-c1"><path d="M 635.621094 0.644531 L 684.082031 0.644531 L 684.082031 672.867188 L 635.621094 672.867188 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c2"><path d="M 684.082031 15.632812 L 684.082031 657.75 C 684.082031 666.027344 677.375 672.738281 669.097656 672.738281 L 650.609375 672.738281 C 642.332031 672.738281 635.621094 666.027344 635.621094 657.75 L 635.621094 15.632812 C 635.621094 7.355469 642.332031 0.644531 650.609375 0.644531 L 669.097656 0.644531 C 677.375 0.644531 684.082031 7.355469 684.082031 15.632812 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c3"><path d="M 0.621094 0.644531 L 49.082031 0.644531 L 49.082031 672.867188 L 0.621094 672.867188 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c4"><path d="M 49.082031 15.632812 L 49.082031 657.75 C 49.082031 666.027344 42.375 672.738281 34.097656 672.738281 L 15.609375 672.738281 C 7.332031 672.738281 0.621094 666.027344 0.621094 657.75 L 0.621094 15.632812 C 0.621094 7.355469 7.332031 0.644531 15.609375 0.644531 L 34.097656 0.644531 C 42.375 0.644531 49.082031 7.355469 49.082031 15.632812 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c5"><rect x="0" width="50" y="0" height="673"/></clipPath>
+<clipPath id="lg-c6"><path d="M 0.0390625 244 L 187 244 L 187 772 L 0.0390625 772 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c7"><rect x="0" width="187" y="0" height="528"/></clipPath>
+<clipPath id="lg-c8"><path d="M 716.511719 106.6875 L 764.960938 106.6875 L 764.960938 779.46875 L 716.511719 779.46875 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c9"><path d="M 731.511719 106.6875 L 749.960938 106.6875 C 758.246094 106.6875 764.960938 113.402344 764.960938 121.6875 L 764.960938 764.453125 C 764.960938 772.738281 758.246094 779.453125 749.960938 779.453125 L 731.511719 779.453125 C 723.230469 779.453125 716.511719 772.738281 716.511719 764.453125 L 716.511719 121.6875 C 716.511719 113.402344 723.230469 106.6875 731.511719 106.6875 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c10"><path d="M 0.511719 0.6875 L 48.960938 0.6875 L 48.960938 673.46875 L 0.511719 673.46875 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c11"><path d="M 15.511719 0.6875 L 33.960938 0.6875 C 42.246094 0.6875 48.960938 7.402344 48.960938 15.6875 L 48.960938 658.453125 C 48.960938 666.738281 42.246094 673.453125 33.960938 673.453125 L 15.511719 673.453125 C 7.230469 673.453125 0.511719 666.738281 0.511719 658.453125 L 0.511719 15.6875 C 0.511719 7.402344 7.230469 0.6875 15.511719 0.6875 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c12"><rect x="0" width="49" y="0" height="674"/></clipPath>
+<clipPath id="lg-c13"><rect x="0" width="438" y="0" height="528"/></clipPath>
+<clipPath id="lg-c14"><path d="M 1057 244 L 1299.398438 244 L 1299.398438 772 L 1057 772 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c15"><rect x="0" width="243" y="0" height="528"/></clipPath>
+<clipPath id="lg-c16"><path d="M 772 244 L 1108 244 L 1108 779.519531 L 772 779.519531 Z" clip-rule="nonzero"/></clipPath>
+<clipPath id="lg-c17"><rect x="0" width="336" y="0" height="536"/></clipPath>
+</defs>
+<g transform="matrix(1,0,0,1,101,324)">
+<g clip-path="url(#lg-c18)">
+  <g clip-path="url(#lg-c1)"><g clip-path="url(#lg-c2)"><g transform="matrix(1,0,0,1,635,0)"><g clip-path="url(#lg-c5)"><g clip-path="url(#lg-c3)"><g clip-path="url(#lg-c4)"><path fill="var(--logo-ii,currentColor)" d="M 0.621094 0.644531 L 49.082031 0.644531 L 49.082031 672.675781 L 0.621094 672.675781 Z"/></g></g></g></g></g></g>
+  <g clip-path="url(#lg-c6)"><g transform="matrix(1,0,0,1,0,244)"><g clip-path="url(#lg-c7)"><g fill="currentColor" fill-opacity="1"><g transform="translate(0.158699,416.628035)"><path d="M 141.125 4.5 C 139.625 4.5 138.21875 4.59375 136.90625 4.78125 C 135.59375 4.96875 134 5.0625 132.125 5.0625 C 120.132812 5.0625 108.796875 3.65625 98.109375 0.84375 C 87.429688 -1.96875 78.8125 -8.148438 72.25 -17.703125 C 65.6875 -27.265625 62.40625 -42.164062 62.40625 -62.40625 L 62.40625 -231.078125 L 28.671875 -231.078125 C 24.171875 -231.078125 20.703125 -231.921875 18.265625 -233.609375 C 15.835938 -235.296875 14.625 -238.578125 14.625 -243.453125 L 14.625 -264.25 C 14.625 -269.125 15.835938 -272.3125 18.265625 -273.8125 C 20.703125 -275.3125 24.171875 -276.0625 28.671875 -276.0625 L 62.40625 -276.0625 L 62.40625 -355.328125 C 62.40625 -361.328125 65.59375 -365.078125 71.96875 -366.578125 L 100.640625 -370.515625 C 105.140625 -370.515625 108.046875 -369.015625 109.359375 -366.015625 C 110.671875 -363.015625 111.328125 -359.640625 111.328125 -355.890625 L 111.328125 -276.0625 L 152.921875 -276.0625 C 161.171875 -276.0625 165.296875 -271.75 165.296875 -263.125 L 165.296875 -244.578125 C 165.296875 -235.578125 161.171875 -231.078125 152.921875 -231.078125 L 111.328125 -231.078125 L 111.328125 -80.40625 C 111.328125 -67.65625 112.257812 -58.5625 114.125 -53.125 C 116 -47.695312 119.09375 -44.421875 123.40625 -43.296875 C 127.71875 -42.171875 133.625 -41.421875 141.125 -41.046875 C 150.488281 -41.046875 155.171875 -36.359375 155.171875 -26.984375 L 155.171875 -9 C 155.171875 -0.75 150.488281 3.75 141.125 4.5 Z"/></g></g></g></g></g>
+  <g clip-path="url(#lg-c8)"><g clip-path="url(#lg-c9)"><g transform="matrix(1,0,0,1,716,106)"><g clip-path="url(#lg-c12)"><g clip-path="url(#lg-c10)"><g clip-path="url(#lg-c11)"><path fill="var(--logo-ii,currentColor)" d="M 0.511719 0.6875 L 48.960938 0.6875 L 48.960938 673.46875 L 0.511719 673.46875 Z"/></g></g></g></g></g></g>
+  <g transform="matrix(1,0,0,1,180,249)"><g clip-path="url(#lg-c13)"><g fill="currentColor" fill-opacity="1"><g transform="translate(1.083043,416.711571)"><path d="M 66.34375 -264.8125 C 74.21875 -244.945312 82.554688 -223.675781 91.359375 -201 C 100.171875 -178.320312 108.882812 -156.207031 117.5 -134.65625 C 126.125 -113.101562 134 -93.519531 141.125 -75.90625 C 148.613281 -94.269531 156.671875 -114.132812 165.296875 -135.5 C 173.921875 -156.863281 182.539062 -178.789062 191.15625 -201.28125 L 216.453125 -265.375 C 219.078125 -272.5 224.140625 -276.0625 231.640625 -276.0625 L 255.25 -276.0625 C 263.875 -276.0625 268.1875 -272.875 268.1875 -266.5 C 268.1875 -265.75 268 -264.53125 267.625 -262.84375 C 267.25 -261.15625 266.875 -260.125 266.5 -259.75 C 262.75 -250.382812 259 -241.109375 255.25 -231.921875 C 251.5 -222.734375 247.566406 -213.644531 243.453125 -204.65625 C 248.691406 -190.78125 254.125 -177.003906 259.75 -163.328125 C 265.375 -149.648438 270.625 -136.4375 275.5 -123.6875 L 295.171875 -75.90625 C 302.671875 -93.519531 310.632812 -113.101562 319.0625 -134.65625 C 327.5 -156.207031 336.210938 -178.320312 345.203125 -201 C 354.203125 -223.675781 362.640625 -245.132812 370.515625 -265.375 C 371.640625 -268.375 373.515625 -270.90625 376.140625 -272.96875 C 378.765625 -275.03125 381.945312 -276.0625 385.6875 -276.0625 L 409.3125 -276.0625 C 418.300781 -276.0625 422.796875 -272.875 422.796875 -266.5 C 422.796875 -265.75 422.515625 -264.53125 421.953125 -262.84375 C 421.390625 -261.15625 421.109375 -260.125 421.109375 -259.75 L 318.21875 -10.6875 C 318.21875 -11.4375 317.1875 -9.84375 315.125 -5.90625 C 313.070312 -1.96875 309.234375 0 303.609375 0 L 287.296875 0 C 282.429688 0 278.96875 -1.40625 276.90625 -4.21875 C 274.84375 -7.03125 273.4375 -9.1875 272.6875 -10.6875 L 218.140625 -142.25 L 164.171875 -10.6875 C 163.796875 -10.3125 162.859375 -8.53125 161.359375 -5.34375 C 159.859375 -2.15625 156.484375 -0.5625 151.234375 -0.5625 L 150.109375 0 L 133.25 0 C 128.375 0 124.90625 -1.3125 122.84375 -3.9375 C 120.78125 -6.5625 119.375 -8.8125 118.625 -10.6875 L 15.75 -259.75 C 15.75 -259.375 15.5625 -260.03125 15.1875 -261.71875 C 14.8125 -263.40625 14.625 -265.1875 14.625 -267.0625 C 14.625 -273.0625 18.742188 -276.0625 26.984375 -276.0625 L 50.59375 -276.0625 C 54.34375 -276.0625 57.53125 -274.9375 60.15625 -272.6875 C 62.78125 -270.4375 64.84375 -267.8125 66.34375 -264.8125 Z"/></g></g></g></g>
+  <g clip-path="url(#lg-c14)"><g transform="matrix(1,0,0,1,1057,244)"><g clip-path="url(#lg-c15)"><g fill="currentColor" fill-opacity="1"><g transform="translate(1.146349,416.628035)"><path d="M 21.921875 -56.21875 C 21.171875 -58.09375 20.890625 -60.25 21.078125 -62.6875 C 21.265625 -65.125 22.484375 -66.71875 24.734375 -67.46875 L 52.84375 -78.71875 C 53.59375 -79.09375 54.71875 -79.28125 56.21875 -79.28125 C 58.46875 -79.28125 60.53125 -78.34375 62.40625 -76.46875 C 64.28125 -74.59375 65.40625 -72.53125 65.78125 -70.28125 C 68.78125 -62.78125 73.367188 -56.6875 79.546875 -52 C 85.734375 -47.320312 92.390625 -44.046875 99.515625 -42.171875 C 106.640625 -40.296875 112.632812 -39.359375 117.5 -39.359375 C 130.25 -39.359375 142.242188 -42.632812 153.484375 -49.1875 C 164.734375 -55.75 170.359375 -64.65625 170.359375 -75.90625 C 170.359375 -88.269531 164.546875 -97.640625 152.921875 -104.015625 C 141.304688 -110.390625 127.816406 -115.632812 112.453125 -119.75 C 87.710938 -126.125 67.84375 -136.242188 52.84375 -150.109375 C 37.851562 -163.984375 30.359375 -181.789062 30.359375 -203.53125 C 30.359375 -226.769531 38.695312 -245.789062 55.375 -260.59375 C 72.0625 -275.394531 93.707031 -282.796875 120.3125 -282.796875 C 141.300781 -282.796875 158.351562 -277.921875 171.46875 -268.171875 C 184.59375 -258.429688 195.84375 -245.128906 205.21875 -228.265625 C 205.96875 -226.765625 206.53125 -225.171875 206.90625 -223.484375 C 207.28125 -221.796875 206.53125 -220.203125 204.65625 -218.703125 L 181.609375 -202.40625 C 180.484375 -201.28125 179.171875 -200.71875 177.671875 -200.71875 C 175.796875 -200.71875 173.921875 -201.84375 172.046875 -204.09375 C 170.171875 -206.34375 168.296875 -208.78125 166.421875 -211.40625 C 161.171875 -218.894531 154.796875 -225.359375 147.296875 -230.796875 C 139.804688 -236.234375 131 -238.953125 120.875 -238.953125 C 107.382812 -238.953125 96.421875 -235.296875 87.984375 -227.984375 C 79.554688 -220.671875 75.34375 -212.519531 75.34375 -203.53125 C 75.34375 -191.90625 80.398438 -183.375 90.515625 -177.9375 C 100.640625 -172.507812 110.945312 -168.296875 121.4375 -165.296875 C 151.425781 -157.796875 174.945312 -146.644531 192 -131.84375 C 209.050781 -117.039062 217.578125 -98.394531 217.578125 -75.90625 C 217.578125 -50.789062 208.113281 -31.015625 189.1875 -16.578125 C 170.257812 -2.148438 146.363281 5.0625 117.5 5.0625 C 104.007812 5.0625 90.609375 2.71875 77.296875 -1.96875 C 63.992188 -6.65625 52.375 -13.492188 42.4375 -22.484375 C 32.507812 -31.484375 25.671875 -42.726562 21.921875 -56.21875 Z"/></g></g></g></g></g>
+  <g clip-path="url(#lg-c16)"><g transform="matrix(1,0,0,1,772,244)"><g clip-path="url(#lg-c17)"><g fill="currentColor" fill-opacity="1"><g transform="translate(0.638278,416.628035)"><path d="M 237.265625 -7.875 L 237.265625 -41.609375 C 228.640625 -29.984375 216.832031 -19.109375 201.84375 -8.984375 C 186.851562 1.128906 170.734375 6.1875 153.484375 6.1875 C 128.003906 6.1875 105.421875 -0.273438 85.734375 -13.203125 C 66.054688 -26.140625 50.59375 -43.476562 39.34375 -65.21875 C 28.101562 -86.957031 22.484375 -110.945312 22.484375 -137.1875 C 22.484375 -163.800781 28.289062 -187.976562 39.90625 -209.71875 C 51.53125 -231.457031 67.273438 -248.789062 87.140625 -261.71875 C 107.003906 -274.65625 129.117188 -281.125 153.484375 -281.125 C 172.234375 -281.125 188.820312 -276.90625 203.25 -268.46875 C 217.675781 -260.03125 229.015625 -249.816406 237.265625 -237.828125 L 237.265625 -260.875 C 237.265625 -270.25 242.320312 -274.9375 252.4375 -274.9375 L 270.4375 -274.9375 C 274.5625 -274.9375 278.304688 -273.71875 281.671875 -271.28125 C 285.046875 -268.84375 286.734375 -265.375 286.734375 -260.875 L 286.734375 -26.421875 C 286.734375 5.054688 280.734375 31.289062 268.734375 52.28125 C 256.742188 73.269531 240.535156 89.015625 220.109375 99.515625 C 199.679688 110.015625 176.535156 115.265625 150.671875 115.265625 C 134.929688 113.484375 120.78125 113.484375 108.21875 109.921875 C 95.664062 106.359375 83.957031 101.015625 73.09375 93.890625 C 68.59375 91.265625 66.34375 88.828125 66.34375 86.578125 C 66.34375 85.828125 66.71875 84.703125 67.46875 83.203125 C 68.21875 81.710938 68.78125 80.78125 69.15625 80.40625 L 84.890625 53.40625 C 86.765625 51.15625 89.390625 50.03125 92.765625 50.03125 C 94.640625 50.03125 96.703125 50.78125 98.953125 52.28125 C 106.078125 57.15625 114.226562 61.09375 123.40625 64.09375 C 132.59375 67.09375 141.492188 68.59375 150.109375 68.59375 C 163.984375 65.5 177.570312 65.5 190.875 59.3125 C 204.1875 53.125 215.242188 44.316406 224.046875 32.890625 C 232.859375 21.460938 237.265625 7.875 237.265625 -7.875 Z M 70.28125 -137.1875 C 70.28125 -119.570312 74.023438 -103.453125 81.515625 -88.828125 C 89.015625 -74.210938 99.132812 -62.59375 111.875 -53.96875 C 124.625 -45.351562 138.492188 -41.046875 153.484375 -41.046875 C 168.109375 -41.046875 181.789062 -45.257812 194.53125 -53.6875 C 207.28125 -62.125 217.585938 -73.554688 225.453125 -87.984375 C 233.328125 -102.421875 237.265625 -118.257812 237.265625 -135.5 C 237.265625 -153.113281 233.515625 -169.320312 226.015625 -184.125 C 218.523438 -198.9375 208.40625 -210.835938 195.65625 -219.828125 C 182.914062 -228.828125 168.859375 -233.328125 153.484375 -233.328125 C 138.492188 -233.328125 124.625 -228.921875 111.875 -220.109375 C 99.132812 -211.304688 89.015625 -199.6875 81.515625 -185.25 C 74.023438 -170.820312 70.28125 -154.800781 70.28125 -137.1875 Z"/></g></g></g></g></g>
+</g>
+</g>
+</symbol>
+</svg>
+
+<!-- ═══════════════════════════
+     SCREEN 1: LANDING
+     ═══════════════════════════ -->
+<div id="s-land" class="screen active">
+  <nav class="nav">
+    <a class="btn sm ghost" href="https://twiigs.co" target="_blank">Back to Home</a>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="card-screen-body fade-in">
+    <div class="card-grid-3" id="land-grid">
+      <div class="flow-card" onclick="startChooseStyle()">
+        <div class="flow-card-visual" id="land-style-vis"></div>
+        <div class="flow-card-footer"><div class="flow-card-label">Choose a palette/style</div></div>
+      </div>
+      <div class="flow-card" onclick="startScratch()">
+        <div class="flow-card-visual" id="land-scratch-vis"></div>
+        <div class="flow-card-footer"><div class="flow-card-label">Build from scratch</div></div>
+      </div>
+      <div class="flow-card" id="land-surprise-card" onclick="window._learnq=window._learnq||[];window._learnq.push(['track','Entry Path Chosen',{path:'mystery'}]);goTo('mystery')">
+        <div class="flow-card-visual">
+          <div class="mystery-q-big">?</div>
+        </div>
+        <div class="flow-card-footer"><div class="flow-card-label">Surprise me</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-footer">twIIgs customization tool</div>
+</div>
+
+<!-- ═══════════════════════════
+     "CHOOSE A STYLE" FLOW — STEP 1: PICK A PALETTE
+     Old entry screens replaced this flow. Retired IDs (kept here for reference):
+       s-e-pal, s-e-pal-choice, s-e-pal-patterns,
+       s-e-pat, s-e-pat-choice, s-e-pat-palettes
+     ═══════════════════════════ -->
+<div id="s-e-palette" class="screen">
+  <nav class="nav">
+    <button class="btn sm ghost" onclick="goBack()">← Back</button>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="card-screen-body fade-in">
+    <div class="card-screen-hed">Pick a palette</div>
+    <div class="card-grid-3" id="cs-pal-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     "CHOOSE A STYLE" FLOW — STEP 2: PICK A STYLE
+     ═══════════════════════════ -->
+<div id="s-e-style" class="screen">
+  <nav class="nav">
+    <button class="btn sm ghost" onclick="goBack()">← Back</button>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="card-screen-body fade-in">
+    <div class="card-screen-hed">Pick a style</div>
+    <div class="card-grid-3" id="cs-style-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     MAKE YOUR OWN PALETTE
+     ═══════════════════════════ -->
+<div id="s-custom-palette" class="screen">
+  <nav class="nav">
+    <button class="btn sm ghost" onclick="goBack()">← Back</button>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="cp-body fade-in">
+    <div class="cp-top">
+      <div class="card-screen-hed">Pick your colors</div>
+      <div class="cp-grid" id="cp-color-grid"></div>
+    </div>
+    <div class="cp-bottom">
+      <div class="card-screen-sub">Your palette</div>
+      <div class="cp-slot-row" id="cp-slot-row"></div>
+      <button class="btn accent cp-next" id="cp-next-btn" onclick="customPaletteNext()" disabled>Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     CUSTOMISER
+     ═══════════════════════════ -->
+<div id="s-cust" class="screen">
+  <nav class="nav">
+    <button class="btn sm ghost" onclick="goBack()" style="padding:0 10px;">← Back</button>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="cust-body">
+    <!-- POLES -->
+    <!-- Touch handlers are attached via addEventListener({passive:false}) in JS so
+         preventDefault() works on mobile Safari; mouse handlers stay inline. -->
+    <div class="poles-stage" id="poles-stage"
+      onmousedown="dragStart(event)"
+      onmousemove="dragMove(event)"
+      onmouseup="dragEnd()"
+      onmouseleave="dragEnd()">
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-panel">
+      <div class="ctrl-mode">
+
+        <!-- 1. Active color bar (fixed top) -->
+        <div class="active-color-bar">
+          <div class="active-color-swatch" id="active-swatch"></div>
+          <div class="active-color-label"  id="active-label">Pick a color below</div>
+          <div class="active-color-hint"   id="active-hint">then tap or drag rings</div>
+        </div>
+
+        <!-- 1b. Color slots (slot mode only) -->
+        <div class="slot-row" id="slot-row" style="display:none"></div>
+
+        <!-- 2. Color picker — fills remaining space -->
+        <div class="color-picker-scroll-wrap">
+          <div class="color-picker-row" id="color-picker-row"></div>
+        </div>
+
+        <!-- 2b. Ledge brush panel — replaces the picker while Adjust Ledges is ON -->
+        <div class="ledge-brush-panel" id="ledge-brush-panel" style="display:none"></div>
+
+        <!-- 3. Constraint toggles -->
+        <div class="ctrl-toggles" id="ctrl-toggles" style="display:none">
+          <button class="toggle-pill" id="unlock-colors-btn" onclick="toggleUnlockColors()">Use all colors</button>
+          <button class="toggle-pill" id="edit-mode-btn" onclick="toggleEditMode()" style="display:none">Edit without pattern</button>
+        </div>
+
+        <!-- 4. Ring info -->
+        <div class="ring-info-row hidden" id="ring-info-row">
+          <span class="ring-info-lbl" id="ring-info-lbl">Ring</span>
+          <div class="ring-nav-row">
+            <button class="ring-nav-btn" id="ring-prev-btn" onclick="navRing(-1)" disabled>‹</button>
+            <button class="ring-nav-btn" id="ring-next-btn" onclick="navRing(1)"  disabled>›</button>
+          </div>
+        </div>
+
+        <!-- 5. Tools (pinned to bottom of ctrl-mode) -->
+        <div class="tools-block">
+          <!-- Main toolbar — always visible, all in one row (More tools toggle inline) -->
+          <div class="scratch-tools main-tools">
+            <button class="btn tool ghost" id="undo-btn" onclick="doUndo()" disabled>↺ Undo</button>
+            <button class="btn tool ghost" onclick="doReset()">Reset</button>
+            <button class="btn tool ghost" id="all-one-btn" onclick="doAllOne()">● All One</button>
+            <button class="btn tool ghost adjust-ledges-toggle" id="adjust-ledges-btn" onclick="doAdjustLedges()">▭ Adjust Ledges</button>
+            <button class="btn tool ghost more-tools-toggle" id="more-tools-btn" onclick="toggleMoreTools()">More tools ▾</button>
+          </div>
+
+          <!-- Secondary toolbar — hidden until "More tools" tapped -->
+          <div class="more-tools-bar" id="more-tools-bar" style="display:none;">
+            <div class="scratch-tools">
+              <button class="btn tool ghost" onclick="doMirror()">Mirror P1→P2</button>
+              <button class="btn tool ghost" onclick="doRandom()">Random</button>
+              <button class="btn tool ghost" id="fill-btn" onclick="doFloodFill()">◼ Fill</button>
+              <button class="btn tool ghost" onclick="doResetColors()">Reset Colors</button>
+              <button class="btn tool ghost" onclick="doResetLedges()">Reset Ledges</button>
+            </div>
+          </div>
+
+          <!-- Pattern swap panel -->
+          <div id="pattern-swap-panel" style="display:none; padding:10px; border-top:1px solid rgba(0,0,0,0.07);">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.64rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--lite); margin-bottom:8px;">Change pattern — ring colors are kept</div>
+            <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;" id="pattern-swap-grid"></div>
+            <button class="btn sm ghost" style="margin-top:8px; width:100%;" onclick="closePatternSwap()">Cancel</button>
+          </div>
+        </div>
+
+      </div><!-- end ctrl-mode -->
+
+      <!-- Action bar — pinned to bottom -->
+      <div class="cust-action-bar">
+        <button class="btn ghost share" onclick="doShare()">Share</button>
+        <button class="btn ghost save" onclick="openSave()">Save</button>
+        <button class="btn accent order" onclick="openPresaleForm('customiser')">LOCK IN MY DESIGN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     MYSTERY
+     ═══════════════════════════ -->
+<div id="s-mystery" class="screen">
+  <nav class="nav">
+    <button class="btn sm ghost" onclick="goBack()">← Back</button>
+    <svg class="logo-svg" onclick="goTo('land')" role="img" aria-label="twIIgs"><use href="#logo-sym"/></svg>
+  </nav>
+  <div class="mystery-body">
+    <div class="mystery-h1">Let us hand pick a design for your twIIgs poles.</div>
+    <div class="mystery-ctas">
+      <textarea id="mystery-comment" class="mystery-comment" maxlength="400"
+        placeholder="Favorite colors, requests, anything you want us to know..."></textarea>
+      <button class="btn lg accent" onclick="doMysteryOrder()">Surprise me →</button>
+      <button class="myst-skip" onclick="goTo('land')">Actually, let me design mine</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     SAVE OVERLAY
+     ═══════════════════════════ -->
+<div class="ov" id="ov-save" onclick="if(event.target===this)closeOv()">
+  <div class="ov-box">
+    <div class="ov-handle"></div>
+    <div class="ov-title">Save Your Design</div>
+    <div class="ov-sub">We'll email you a link to come back or order</div>
+    <div class="ov-poles"><div class="poles-wrap" id="ov-poles"></div></div>
+    <div class="ov-lbl">Your email</div>
+    <div class="ov-email-row">
+      <input class="ov-email-input" type="email" id="ov-email" placeholder="your@email.com" autocomplete="email">
+      <button class="btn accent sm" onclick="submitSave()">Save →</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:8px 0;">
+      <input type="checkbox" id="ov-design-link" checked disabled
+        style="width:16px;height:16px;">
+      <label for="ov-design-link"
+        style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:600;
+        letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);">
+        Email me my design link
+      </label>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:8px 0;">
+      <input type="checkbox" id="ov-marketing-optin"
+        style="width:16px;height:16px;">
+      <label for="ov-marketing-optin"
+        style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:600;
+        letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);">
+        Sign me up for twIIgs updates and deals
+      </label>
+    </div>
+    <div class="ov-confirm" id="ov-confirm">Design saved — check your email ✓</div>
+    <div class="ov-spam">If you don't see it, check your spam folder.</div>
+    <button class="btn ghost" style="width:100%;margin-top:14px;" onclick="closeOv()">Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+     PRESALE CONFIRMATION FORM
+     ═══════════════════════════ -->
+<div class="ov" id="ov-presale" onclick="if(event.target===this)closePresaleForm()">
+  <div class="ov-box" style="position:relative;">
+    <button class="save-popup-x" onclick="closePresaleForm()" aria-label="Close" style="top:14px;right:16px;">✕</button>
+    <div class="ov-handle"></div>
+    <div class="ov-poles"><div class="poles-wrap" id="ov-presale-poles"></div></div>
+    <div class="ov-lbl">First name</div>
+    <div class="ov-email-row">
+      <input class="ov-email-input" type="text" id="pf-first" placeholder="First name" autocomplete="given-name" required>
+    </div>
+    <div class="ov-lbl">Last name</div>
+    <div class="ov-email-row">
+      <input class="ov-email-input" type="text" id="pf-last" placeholder="Last name" autocomplete="family-name" required>
+    </div>
+    <div class="ov-lbl">Your email</div>
+    <div class="ov-email-row">
+      <input class="ov-email-input" type="email" id="pf-email" placeholder="your@email.com" autocomplete="email" required>
+    </div>
+    <button class="btn accent" style="width:100%;margin-top:14px;" onclick="submitPresale()">Lock In My Design</button>
+  </div>
+</div>
+
+<div class="save-popup" id="presale-popup" onclick="if(event.target===this)closePresalePopup()">
+  <div class="save-popup-box">
+    <button class="save-popup-x" onclick="closePresalePopup()" aria-label="Close">✕</button>
+    <div class="save-popup-check">✓</div>
+    <div class="save-popup-title">Design confirmed!</div>
+    <div class="save-popup-sub" id="presale-popup-sub">We've got your design. </div>
+    <button class="btn ghost" style="width:100%;margin-top:16px;" onclick="closePresalePopup()">Done</button>
+  </div>
+</div>
+
+<div class="save-popup" id="save-popup" onclick="if(event.target===this)closeSavePopup()">
+  <div class="save-popup-box">
+    <button class="save-popup-x" onclick="closeSavePopup()" aria-label="Close">✕</button>
+    <div class="save-popup-check">✓</div>
+    <div class="save-popup-title">Your design is saved!</div>
+    <div class="save-popup-sub">Check your inbox for the link.</div>
+    <div class="save-popup-sub">Don't see it? Check your spam folder.</div>
+  </div>
+</div>
+
+<div class="spacing-popup" id="spacing-popup" onclick="if(event.target===this)closeSpacingPopup()">
+  <div class="spacing-popup-box">
+    <button class="save-popup-x" onclick="closeSpacingPopup()" aria-label="Close">✕</button>
+    <p class="spacing-popup-text">The ledges are wider than the rings, which creates the points of leverage along the pole. The default configuration is what we've found works best for most people, but you can move them to wherever feels right.</p>
+    <p class="spacing-popup-text">If you want to fit the spaces to your hand size exactly, rings and ledges are each 12mm tall.</p>
+    <p class="spacing-popup-text">If you change your mind after your poles arrive, the rings and ledges slide off and reposition by hand, so no stress!</p>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ══════════════════════════════════════════════════
+   SVG RING BUILDERS
+   ══════════════════════════════════════════════════ */
+function ringRect(w, h, color, rxMul) {
+  // Card previews pass an explicit rxMul: use the exact fractional radius (SVG
+  // allows decimals) so tiny rings round smoothly and consistently instead of
+  // quantizing to a blocky integer. Customiser passes none → original 0.35 round.
+  const rx = rxMul != null ? h * rxMul : Math.round(h * 0.35);
+  return `<rect x="0" y="0" width="${w}" height="${h}" rx="${rx}" ry="${rx}" fill="${color}"/>`;
+}
+function svgRing(w, h, color, extraClass, attrs, rxMul) {
+  return `<svg class="ring-svg${extraClass?' '+extraClass:''}" ${attrs||''}
+    viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"
+    xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;">
+    ${ringRect(w, h, color, rxMul)}
+  </svg>`;
+}
+function svgLedge(w, h, color, extraClass, attrs, rxMul) {
+  return `<svg class="ring-svg${extraClass?' '+extraClass:''}" ${attrs||''}
+    viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"
+    xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;">
+    ${ringRect(w, h, color, rxMul)}
+  </svg>`;
+}
+
+
+
+/* ══════════════════════════════════════════════════
+   ── EDIT COLORS HERE ──
+   16 official twIIgs colors.
+   ══════════════════════════════════════════════════ */
+const COLORS = [
+  {hex:'#000000', name:'Black'},
+  {hex:'#fffae0', name:'Ivory'},
+  {hex:'#f20927', name:'Red'},
+  {hex:'#aa3e19', name:'Clay'},
+  {hex:'#fff382', name:'Yellow'},
+  {hex:'#ff7d00', name:'Orange'},
+  {hex:'#f13070', name:'Raspberry'},
+  {hex:'#9b103b', name:'Wine'},
+  {hex:'#b6e0f7', name:'Sky Blue'},
+  {hex:'#00798e', name:'Teal'},
+  {hex:'#1d3055', name:'Navy'},
+  {hex:'#4f4192', name:'Violet'},
+  {hex:'#b3e14f', name:'Lime'},
+  {hex:'#a2d5a4', name:'Sage'},
+  {hex:'#384939', name:'Olive'}
+];
+
+/* Look up colors by name — one source of truth for every hex value.
+   byName('Red','Sky') returns the matching COLORS objects; byHex(...) returns
+   just their hex strings. Reference colors by name everywhere below so
+   reordering or recoloring COLORS can never silently break a palette/style. */
+const COLOR  = Object.fromEntries(COLORS.map(c => [c.name, c]));
+const byName = (...names) => names.map(n => COLOR[n]);
+const byHex  = (...names) => names.map(n => COLOR[n].hex);
+
+/* ══════════════════════════════════════════════════
+   ── EDIT PALETTES HERE ──
+   Palettes hold a variable number of colors (2–7), each referenced by literal
+   hex value (normally one of the COLORS hexes). No names are shown on the
+   palette picker cards. Add a palette by adding a hex-array row — the picker
+   grids and swatches scale automatically to any length.
+   ══════════════════════════════════════════════════ */
+const PALETTES = [
+  ['#aa3e19','#9b103b','#384939','#00798e'],
+  ['#fffae0','#000000','#1d3055','#384939'],
+  ['#9b103b','#f13070','#ff7d00','#aa3e19'],
+  ['#a2d5a4','#1d3055','#00798e','#9b103b'],
+  ['#fff382','#aa3e19','#00798e','#1d3055'],
+  ['#384939','#fff382','#a2d5a4','#b3e14f'],
+  ['#b6e0f7','#4f4192','#f20927','#fffae0'],
+  ['#b6e0f7','#4f4192','#b3e14f','#00798e'],
+  ['#f20927','#fff382','#1d3055','#fffae0'],
+  ['#f20927','#aa3e19','#1d3055','#000000'],
+  ['#9b103b','#b6e0f7','#f13070','#fff382'],
+  ['#a2d5a4','#b3e14f','#384939'],
+  ['#b6e0f7','#00798e','#1d3055'],
+  ['#9b103b','#f13070','#4f4192'],
+  ['#00798e','#ff7d00','#aa3e19'],
+  ['#9b103b','#1d3055','#b6e0f7'],
+  ['#fffae0','#b3e14f','#9b103b'],
+  ['#384939','#f20927','#000000'],
+  ['#4f4192','#00798e','#a2d5a4']
+];
+
+/* Palettes are literal hex arrays. Everything else in the app that consumes a
+   palette entry expects a {hex, name} color object (swatches use hex; the
+   color picker also shows a name). paletteColors() resolves a palette's hexes
+   to those objects, matching each hex to its COLORS entry (falling back to the
+   nearest COLORS color for hexes not present verbatim, so a name is always
+   available). */
+const _hexToRGB = h => {
+  const s = h.replace('#','');
+  return [parseInt(s.slice(0,2),16), parseInt(s.slice(2,4),16), parseInt(s.slice(4,6),16)];
+};
+function colorForHex(hex) {
+  const lc = hex.toLowerCase();
+  const exact = COLORS.find(c => c.hex.toLowerCase() === lc);
+  if (exact) return {hex, name: exact.name};
+  // No verbatim match: label it with the nearest COLORS color by RGB distance.
+  const [r,g,b] = _hexToRGB(hex);
+  let best = COLORS[0], bestD = Infinity;
+  COLORS.forEach(c => {
+    const [cr,cg,cb] = _hexToRGB(c.hex);
+    const d = (r-cr)**2 + (g-cg)**2 + (b-cb)**2;
+    if (d < bestD) { bestD = d; best = c; }
+  });
+  return {hex, name: best.name};
+}
+const paletteColors = idx => PALETTES[idx].map(colorForHex);
+
+/* ══════════════════════════════════════════════════
+   ── EDIT PATTERNS HERE ──
+   7 patterns. p1/p2 hold per-ring slot indices.
+   name: shown on the style-selection cards (only there). Edit freely.
+   defaultPalette: which palette loads with "use default colors".
+   Optional fields (used by the 4 multi-colour styles below):
+     palette: array of literal hex colours the slot indices map into,
+              independent of PALETTES (so a style can use the full
+              colour range, not just a 3–6 colour palette).
+     ledges:  array of ring positions that render as ledges, overriding
+              the default [0,10,19,28,34,40].
+   Patterns without these fields behave exactly as before.
+   ══════════════════════════════════════════════════ */
+// To reorder colors within a style, edit the colorOrder array. Each number is a
+// COLORS index. Example: [2,0,1] means slot 0 = Red, slot 1 = Black, slot 2 = Ivory
+const PATTERNS = [
+  {
+    name: 'Highcreek',
+    defaultPalette: 0,
+    useColors: true,
+    p1: [10,10,10,9,8,8,8,9,10,10,10,10,10,9,8,8,9,10,10,10,10,10,9,8,8,9,10,10,10,10,9,8,9,10,10,10,9,8,9,10,10],
+    p2: [10,10,10,9,8,8,8,9,10,10,10,10,10,9,8,8,9,10,10,10,10,10,9,8,8,9,10,10,10,10,9,8,9,10,10,10,9,8,9,10,10]
+  },
+  {
+    name: '50/50',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: Array(41).fill(7),
+    p2: Array(41).fill(8)
+  },
+  {
+    name: 'Naomi',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [3,9,14,9,14,9,14,9,14,9,3,9,14,9,14,9,14,9,14,3,9,14,9,14,9,14,9,14,3,9,14,9,14,9,3,9,14,9,14,9,3],
+    p2: [3,9,14,9,14,9,14,9,14,9,3,9,14,9,14,9,14,9,14,3,9,14,9,14,9,14,9,14,3,9,14,9,14,9,3,9,14,9,14,9,3]
+  },
+  {
+    name: 'Wind Drift',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [14,1,1,1,1,1,1,1,1,1,14,1,1,1,1,1,1,1,1,14,1,1,1,1,1,1,1,1,14,1,1,1,1,1,14,1,1,1,1,1,14],
+    p2: [14,1,1,1,1,1,1,1,1,1,14,1,1,1,1,1,1,1,1,14,1,1,1,1,1,1,1,1,14,1,1,1,1,1,14,1,1,1,1,1,14]
+  },
+  {
+    name: 'Garden Low',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [12,13,13,13,4,4,4,13,13,13,12,13,13,4,4,4,4,13,13,12,13,13,13,4,4,13,13,13,12,13,13,4,13,13,12,13,13,4,13,13,12],
+    p2: [12,13,13,13,4,4,4,13,13,13,12,13,13,4,4,4,4,13,13,12,13,13,13,4,4,13,13,13,12,13,13,4,13,13,12,13,13,4,13,13,12]
+  },
+  {
+    name: 'Alpenglow',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [1,1,1,7,7,7,6,6,1,1,1,1,7,7,7,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,1,1,1,1,1,1,1,1,1],
+    p2: [1,1,1,7,7,7,6,6,1,1,1,1,7,7,7,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,1,1,1,1,1,1,1,1,1]
+  },
+  {
+    name: 'Blocks',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [2,2,2,2,2,5,5,5,5,5,5,4,4,4,4,13,13,13,13,13,8,8,8,8,10,10,10,10,10,7,7,7,7,7,7,11,11,11,11,11,11],
+    p2: [2,2,2,2,2,5,5,5,5,5,5,4,4,4,4,13,13,13,13,13,8,8,8,8,10,10,10,10,10,7,7,7,7,7,7,11,11,11,11,11,11]
+  },
+  {
+    name: 'No Ledges',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    noLedges: true,
+    p1: Array(41).fill(0),
+    p2: Array(41).fill(0)
+  },
+  {
+    name: 'Stripes',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10],
+    p2: [2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10,7,2,5,4,13,8,10]
+  },
+  {
+    name: 'Red Mountain 3',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [7,7,3,3,8,8,8,3,3,7,7,7,3,3,8,8,8,3,7,7,7,3,3,8,8,8,3,7,7,7,3,8,3,7,7,7,3,8,3,7,7],
+    p2: [7,7,3,3,8,8,8,3,3,7,7,7,3,3,8,8,8,3,7,7,7,3,3,8,8,8,3,7,7,7,3,8,3,7,7,7,3,8,3,7,7]
+  },
+  {
+    name: 'Solstice',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [1,1,1,2,2,2,2,2,1,1,1,1,1,10,10,10,10,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    p2: [1,1,1,2,2,2,2,2,1,1,1,1,1,10,10,10,10,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  },
+  {
+    name: 'Glide',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [0,0,0,14,10,10,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0],
+    p2: [0,0,0,14,10,10,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0]
+  },
+  {
+    name: 'T Grove',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [14,14,13,13,12,12,13,13,13,14,14,14,13,13,12,12,13,13,14,14,14,13,13,12,12,13,13,14,14,14,13,12,13,14,14,14,13,12,13,14,14],
+    p2: [14,14,13,13,12,12,13,13,13,14,14,14,13,13,12,12,13,13,14,14,14,13,13,12,12,13,13,14,14,14,13,12,13,14,14,14,13,12,13,14,14]
+  },
+  {
+    name: 'Graupel',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [7,10,10,10,10,10,10,10,10,10,7,10,10,10,10,10,10,10,10,7,10,10,10,10,10,10,10,10,7,10,10,10,10,10,7,10,10,10,10,10,7],
+    p2: [12,10,10,10,10,10,10,10,10,10,12,10,10,10,10,10,10,10,10,12,10,10,10,10,10,10,10,10,12,10,10,10,10,10,12,10,10,10,10,10,12]
+  },
+  {
+    name: 'Sunrise',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [0,0,0,7,6,5,4,8,0,0,0,0,0,0,8,8,8,8,0,0,0,0,8,8,0,0,0,0,0,0,8,0,0,0,0,0,0,8,0,0,0],
+    p2: [0,0,0,7,6,5,4,8,0,0,0,0,0,0,8,8,8,8,0,0,0,0,8,8,0,0,0,0,0,0,8,0,0,0,0,0,0,8,0,0,0]
+  },
+  {
+    name: 'Dusk Patrol',
+    defaultPalette: 0,
+    useColors: true,
+    colorOrder: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    p1: [0,0,1,11,11,11,1,0,0,0,0,0,1,11,11,1,0,0,0,0,0,1,11,11,1,0,0,0,0,0,1,11,1,0,0,0,1,11,1,0,0],
+    p2: [0,0,1,11,11,11,1,0,0,0,0,0,1,11,11,1,0,0,0,0,0,1,11,11,1,0,0,0,0,0,1,11,1,0,0,0,1,11,1,0,0]
+  },
+  {
+    name: 'Wildflower',
+    defaultPalette: 0,
+    useColors: true,
+    p1: [6,6,6,11,13,11,13,11,6,6,6,6,6,11,6,6,11,6,6,6,6,6,11,6,6,11,6,6,6,6,6,13,6,6,6,6,6,11,6,6,6],
+    p2: [6,6,6,11,13,11,13,11,6,6,6,6,6,11,6,6,11,6,6,6,6,6,11,6,6,11,6,6,6,6,6,13,6,6,6,6,6,11,6,6,6]
+  }
+];
+PATTERNS.forEach(p => { ['p1','p2'].forEach(k => { while(p[k].length<41)p[k].push(0); p[k]=p[k].slice(0,41); }); });
+
+/* ══════════════════════════════════════════════════
+   CONSTANTS
+   ══════════════════════════════════════════════════ */
+const N         = 41;
+const DEF_BIG   = new Set([0,10,19,28,34,40]);
+const MAX_LEDGE = 6;
+const BLACK     = '#000000';
+const CAP_H_R   = 0.38;
+
+/* ══════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════ */
+const S = {
+  p1:          new Array(N).fill(BLACK),
+  p2:          new Array(N).fill(BLACK),
+  big:         new Set(DEF_BIG),
+  history:     [],
+  activeColor: null,   // hex string of currently selected paint color
+  pendingTool: null,   // 'all-one' (one-shot, waits for a color pick)
+  fillMode:    false,  // true = Fill toggle is ON; taps flood matching colors
+  adjustLedgesMode: false, // true = Adjust Ledges toggle is ON; taps apply the shape brush
+  ledgeBrush:  null,   // 'ring'|'ledge'|null — which shape is the active brush
+  pulsed:      false,
+  // constraint state
+  constrainedPalette: null,  // palette index if constrained, else null
+  customPalette:      null,  // array of hex values if a user-built palette is in play, else null
+  patternLoaded:      null,  // pattern index if a pattern was loaded
+  unlocked:           false, // true = show all 12 despite constrainedPalette
+  // editing mode
+  slotMode:    false,        // true = edit by color slot; false = free per-ring painting
+  activeSlot:  null,         // currently selected slot id (raw pattern slot index) or null
+  slotP1:      null,         // per-ring slot index for pole 1 (set when a pattern loads)
+  slotP2:      null,         // per-ring slot index for pole 2
+  // one-step-back revert: color each ring/slot held BEFORE its last paint. Re-applying
+  // the active color to a ring/slot that already has it reverts to this stored color.
+  prevP1:      {},           // { ringIndex: hexColor } — previous color per pole-1 ring
+  prevP2:      {},           // { ringIndex: hexColor } — previous color per pole-2 ring
+  prevSlotColors: {},        // { slotId: hexColor } — previous color per slot (slot mode)
+};
+
+/* drag state */
+let drag = { active:false, painted:new Set() };
+
+/* pinch / double-tap zoom state (mobile only) */
+let zoom = { scale:1, tx:0, ty:0 };
+let _touchGesture = null;      // 'paint' | 'pan' | 'pinch'
+let _pinchStart = null, _panStart = null, _lastTap = 0;
+function isMobile() { return window.innerWidth < 740; }
+
+/* ══════════════════════════════════════════════════
+   SIZING
+   ══════════════════════════════════════════════════ */
+const SZ = {
+  land: {sw:20,bw:34,h:8,  gap:0, shw:10, shh:40, capH:10},
+  tiny: {sw:14,bw:24,h:6,  gap:0, shw:7,  shh:28, capH:8},
+  ov:   {sw:16,bw:27,h:7,  gap:0, shw:9,  shh:34, capH:9}
+};
+
+/* Calculate pole size to fit inside a given pixel height.
+   The gap between rings scales with ring height (~0.3·h) instead of a fixed 2px, so
+   previews keep the editor's tight proportions even when small.
+   Stacked height ≈ 41·h + 40·(0.3·h) + 4.5·h (shaft) ≈ 57.5·h. */
+function szForHeight(availH) {
+  /* Mobile forces an exact 1px gap between rings (see the .pole-rings !important
+     rule), so the pole must be sized for that gap or the 41-ring stack renders
+     taller than measured and gets clipped. Stack = 41·h + 40·1 + 4.5·h(shaft).
+     Desktop keeps its original ~0.3·h gap maths so it is unchanged. */
+  if (isMobile()) {
+    const gapSize = 1;                       // mobile forces an exact 1px inter-ring gap
+    // 41 rings → 40 gaps. Provisional h derives the shaft height (shaftH = 4.5·h),
+    // then fit the 41 ring heights into what's left.
+    const h0     = Math.max(2.5, Math.min(12, (availH - 40 * gapSize) / 45.5));
+    const shaftH = Math.round(h0 * 4.5);
+    const availableH = availH - shaftH - (40 * gapSize);
+    let h = availableH / 41;
+    h = Math.max(2.5, Math.min(12, h));      // same clamp range as before
+    const sw  = Math.round(h * 1.9);
+    const bw  = Math.round(sw * 1.55);
+    const shw = Math.max(3, Math.round(sw * 0.55));
+    const shh = Math.round(h * 4.5);
+    return {sw, bw, h: Math.round(h*10)/10, gap:0, ringGap:gapSize, shw, shh, capH:Math.round(bw*0.38)};
+  }
+  const h = Math.max(3, Math.min(7, availH / 55));
+  const sw  = Math.round(h * 1.9);
+  const bw  = Math.round(sw * 1.55);
+  const shw = Math.max(4, Math.round(sw * 0.55));
+  const shh = Math.round(h * 4.5);
+  const ringGap = Math.max(0.5, Math.round(h * 0.3 * 10) / 10);
+  return {sw, bw, h: Math.round(h*10)/10, gap:0, ringGap, shw, shh, capH:Math.round(bw*0.38)};
+}
+
+function getDynSz() {
+  const el = document.getElementById('poles-stage');
+  if (!el) return SZ.land;
+  const W=el.clientWidth, H=el.clientHeight;
+  let h;
+  if (window.innerWidth <= 739) {
+    /* Size rings so the FULL stack fits with no vertical clipping, accounting for
+       every vertical consumer: the shaft below the rings (D.shh ≈ 4.5·h), the
+       POLE 1 / POLE 2 label above them (~20px), and the 40 gaps between 41 rings
+       (1px each on mobile). */
+    const gapSize  = 1;                      // mobile gap: 1px (was 2px) — more ring height
+    const labelHeight = 20;                  // POLE 1 / POLE 2 label
+    const gapsHeight  = 40 * gapSize;        // 40 gaps between 41 rings
+    // provisional h to derive the shaft height (shaftHeight = D.shh = 4.5·h)
+    const h0 = Math.max(3, Math.min(14, (H - gapsHeight - labelHeight - 40) / 41));
+    const shaftHeight = Math.round(h0 * 4.5);
+    const availableH = H - shaftHeight - labelHeight - gapsHeight;
+    h = availableH / 41;
+    h = Math.max(3, Math.min(14, h));        // clamp 3–14px on mobile (lets poles grow to fill)
+  } else {
+    /* Desktop sizing unchanged. */
+    const targetH = H * 0.88;
+    h = (targetH - 41*0.9) / 45.6;
+    h = Math.max(3, Math.min(13, h));
+  }
+  let sw = Math.round(h*1.9), bw = Math.round(sw*1.55);
+  let shh = Math.round(h*4.5), shw = Math.max(2,Math.round(sw*0.55));
+  let capH = Math.max(4, Math.round(bw*CAP_H_R));
+  const pGap = Math.min(40, W*0.1);
+  if (2*bw+pGap+28 > W*0.93) {
+    const sc = (W*0.93-pGap-28)/(2*bw);
+    h=Math.max(2.5,h*sc); sw=Math.max(4,Math.round(sw*sc));
+    bw=Math.max(7,Math.round(bw*sc)); shh=Math.max(10,Math.round(shh*sc));
+    shw=Math.max(2,Math.round(sw*0.55)); capH=Math.max(3,Math.round(bw*CAP_H_R));
+  }
+  return {sw,bw,h:Math.round(h*10)/10,gap:0.9,shw,shh,capH};
+}
+
+/* ══════════════════════════════════════════════════
+   RING HTML BUILDERS — SVG stamps
+   ══════════════════════════════════════════════════ */
+function buildRingSVG(isBig, isCap, w, h, color, extraClass, attrs, rxMul) {
+  // All three types use ledge shape (as requested for now on cap too)
+  if (isBig || isCap) {
+    return svgLedge(w, h, color, extraClass, attrs, rxMul);
+  }
+  return svgRing(w, h, color, extraClass, attrs, rxMul);
+}
+
+function buildPoleHTML(hexArr, D, poleKey, interactive) {
+  const slotArr = poleKey==='p1' ? S.slotP1 : S.slotP2;
+  let rings = '';
+  hexArr.forEach((hex,i) => {
+    const inSlot = interactive && !S.adjustLedgesMode && S.slotMode && S.activeSlot!==null && slotArr && slotArr[i]===S.activeSlot;
+    const big    = S.big.has(i);
+    const isCap  = i===0;
+    const w      = (big || isCap) ? D.bw : D.sw;
+    const cls    = interactive ? `tap${inSlot?' slot-hl':''}` : '';
+    const onclick = interactive ? `onclick="ringClick('${poleKey}',${i})"` : '';
+    const dataPole = interactive ? `data-pole="${poleKey}" data-idx="${i}"` : '';
+    rings += buildRingSVG(big, isCap, w, D.h, hex, cls, `${onclick} ${dataPole}`);
+  });
+  return `<div class="pole-body"><div class="pole-rings">${rings}</div>
+    <div class="pole-shaft" style="width:${D.shw}px;height:${D.shh}px;"></div></div>`;
+}
+
+/* Color-remap preference order. When a style's native color is not available in
+   the chosen palette, buildPolesFromPattern() substitutes the first color from
+   that style color's list below that IS in the palette. Keyed by COLORS name. */
+const COLOR_REMAP = {
+  'Black': ['Navy', 'Olive', 'Wine', 'Clay', 'Violet', 'Teal', 'Ivory'],
+  'Ivory': ['Sky', 'Sage', 'Teal', 'Olive', 'Yellow', 'Lime', 'Raspberry'],
+  'Red': ['Raspberry', 'Orange', 'Lime', 'Yellow', 'Wine', 'Violet', ''],
+  'Clay': ['Wine', 'Olive', 'Navy', 'Teal', 'Violet', 'Black', 'ivory'],
+  'Yellow': ['Orange', 'Raspberry', 'Sage', 'Sky', 'Lime', 'Red'],
+  'Orange': ['Red', 'Yellow', 'Raspberry', 'LIme', 'Clay', ''],
+  'Raspberry': ['Orange', 'Red', 'Violet', 'Yellow', 'LIme', 'sage', 'Sky'],
+  'Wine': ['Olive', 'Teal', 'Clay', 'Navy', 'Raspberry', 'Violet'],
+  'Sky Blue': ['Sage', 'Ivory', 'Teal', 'Yellow', 'Raspberry', 'Violet'],
+  'Teal': ['Navy', 'Olive', 'WIne', 'Clay', 'Sage'],
+  'Navy': ['Olive', 'Wine', 'Teal', 'Clay', 'Black', 'Sky', 'Ivory'],
+  'Violet': ['Teal', 'Wine', 'Raspberry', 'Sage', 'Sky'],
+  'Lime': ['Sage', 'Yellow', 'Sky Blue', 'Teal'],
+  'Sage': ['Lime', 'Sky Blue', 'Teal', 'Ivory', 'Olive'],
+  'Olive': ['Teal', 'Wine', 'Clay', 'Navy', 'Violet', 'Lime', 'Black'],
+};
+
+/* Resolve a (possibly mistyped/short) COLOR_REMAP substitute name to its COLORS
+   hex — case-insensitive, tolerating e.g. 'Sky' for 'Sky Blue'. Returns null for
+   names (incl. '') with no COLORS match, so they're skipped during the search. */
+function remapHexForName(name) {
+  const n = (name || '').trim().toLowerCase();
+  if (!n) return null;
+  const c = COLORS.find(c => c.name.toLowerCase() === n)
+        || COLORS.find(c => c.name.toLowerCase().startsWith(n));
+  return c ? c.hex : null;
+}
+
+/* Per-ring slot index → hex resolver for a pattern.
+   recolor=false: native look — useColors styles use the full COLORS list, others
+   use PALETTES[palIdx]. (Unchanged legacy behavior.)
+   recolor=true : keep each style color that is already in the palette; remap the
+   rest via COLOR_REMAP to the first available palette substitute, never reusing a
+   color already taken by another slot. */
+function styleColorFor(pat, palIdx, recolor, palHexOverride) {
+  if (!recolor) {
+    const base = pat.palette ? pat.palette
+      : pat.useColors ? COLORS.map(c => c.hex)
+      : PALETTES[palIdx];
+    return si => base[si % base.length];
+  }
+  /* palHexOverride (a custom palette's hex array) takes precedence over the
+     standard PALETTES[palIdx] when recoloring a style into those colors. */
+  const palHex    = palHexOverride || PALETTES[palIdx];
+  const palLc     = palHex.map(h => h.toLowerCase());
+  const nativeArr = pat.palette ? pat.palette : COLORS.map(c => c.hex);
+  const nativeOf  = si => nativeArr[si % nativeArr.length];
+  const order     = pat.colorOrder || COLORS.map((_, i) => i);
+  const used      = [...new Set([...pat.p1, ...pat.p2])];
+  // Slots in order of visual weight (heaviest first): colorOrder ranks them, and
+  // any slot it omits follows in its natural order.
+  const ranked    = order.filter(si => used.includes(si));
+  used.forEach(si => { if (!ranked.includes(si)) ranked.push(si); });
+
+  const map   = {};
+  const count = new Map(palLc.map(h => [h, 0]));   // palette hex → # of slots mapped to it
+  const use   = h => count.set(h.toLowerCase(), count.get(h.toLowerCase()) + 1);
+  // Eligible pool = the palette colors used the fewest times so far. While any
+  // color is still unused this excludes every already-used color, so no color
+  // repeats until all have been used once; once all are level the pool resets to
+  // the whole palette, so overflow fills evenly (2 of each before any gets 3).
+  const eligible = () => {
+    const min = Math.min(...count.values());
+    return palHex.filter(h => count.get(h.toLowerCase()) === min);
+  };
+  // Assign each slot, heaviest first, to the closest color in the current pool:
+  // the native color itself if still available, else the first COLOR_REMAP
+  // preference that is in the pool, else the earliest eligible palette color.
+  ranked.forEach(si => {
+    const pool   = eligible();
+    const poolLc = pool.map(h => h.toLowerCase());
+    const nh     = nativeOf(si).toLowerCase();
+    let chosen;
+    if (poolLc.includes(nh)) {
+      chosen = pool[poolLc.indexOf(nh)];
+    } else {
+      const subs = COLOR_REMAP[colorForHex(nativeOf(si)).name] || [];
+      for (const s of subs) {
+        const h = remapHexForName(s), i = h ? poolLc.indexOf(h.toLowerCase()) : -1;
+        if (i >= 0) { chosen = pool[i]; break; }
+      }
+      if (!chosen) chosen = pool[0];
+    }
+    map[si] = chosen; use(chosen);
+  });
+  return si => (si in map) ? map[si] : palHex[0];
+}
+
+function buildPolesFromPattern(palIdx, patIdx, sc, D, recolor = false, palHexOverride = null) {
+  const pat = PATTERNS[patIdx];
+  const resolve = styleColorFor(pat, palIdx, recolor, palHexOverride);
+  const bigSet = pat.noLedges ? new Set([0]) : (pat.ledges ? new Set(pat.ledges) : DEF_BIG);
+  const buildStatic = arr => {
+    let r='';
+    arr.forEach((si,i) => {
+      const bg    = resolve(si);
+      const big   = bigSet.has(i);
+      const isCap = i===0;
+      const w     = (big||isCap) ? D.bw : D.sw;
+      r += buildRingSVG(big, isCap, w, D.h, bg, '', '', D.cornerRadiusMultiplier);
+    });
+    return `<div class="pole-body"><div class="pole-rings" style="gap:${D.ringGap??2}px;">${r}</div><div class="pole-shaft" style="width:${D.shw}px;height:${D.shh}px;"></div></div>`;
+  };
+  return `<div class="pole-col">${buildStatic(pat.p1)}</div>
+          <div class="pole-col">${buildStatic(pat.p2)}</div>`;
+}
+
+/* Build a static all-black pole pair for preview cards */
+function blackPolesHTML(D) {
+  const blk = new Array(N).fill(BLACK);
+  let p1='', p2='';
+  blk.forEach((hex,i) => {
+    const big   = DEF_BIG.has(i);
+    const isCap = i===0;
+    const w     = (big||isCap) ? D.bw : D.sw;
+    p1 += buildRingSVG(big, isCap, w, D.h, hex, '', '', D.cornerRadiusMultiplier);
+    p2 += buildRingSVG(big, isCap, w, D.h, hex, '', '', D.cornerRadiusMultiplier);
+  });
+  const pole = rings => `<div class="pole-body"><div class="pole-rings" style="gap:${D.ringGap??2}px;">${rings}</div>
+    <div class="pole-shaft" style="width:${D.shw}px;height:${D.shh}px;"></div></div>`;
+  return `<div class="poles-wrap">
+    <div class="pole-col">${pole(p1)}</div>
+    <div class="pole-col">${pole(p2)}</div>
+  </div>`;
+}
+
+/* Get pole size fitted to a card visual element.
+   `fill` = fraction of the visual height the pole stack should occupy (default
+   0.88). Taller cards (the style picker) pass a smaller fill so the poles keep a
+   clear top/bottom margin and never look clipped against the card edges. */
+function szForEl(el, fill = 0.88) {
+  if (!el) return SZ.land;
+  let h = el.clientHeight;
+  if (!h || h < 20) {
+    // No real height on the element itself — fall back to the parent card and
+    // subtract the footer (~40px) since that height includes the label.
+    h = el.parentElement?.clientHeight || 120;
+    if (h < 20) h = 120;
+    h = Math.max(60, h - 40);
+  } else {
+    // clientHeight includes the visual's vertical padding; the poles live in the
+    // content box, so size to the content height so the shaft is never clipped.
+    const cs = getComputedStyle(el);
+    h -= (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+  }
+  // Size the pole stack to fill `fill` of the card's height so the poles fill the
+  // card visual area, while still leaving headroom top & bottom.
+  let D = szForHeight(h * fill);
+  // Mobile: also guarantee BOTH poles fit the card width so neither is clipped by
+  // .flow-card-visual's overflow:hidden. Scale the pole down proportionally if the
+  // pair (2 ledges + inter-pole gap) would overflow.
+  if (isMobile()) {
+    const w = el.clientWidth;
+    if (w > 20) {
+      const interGap = Math.round(w * 0.03);   // matches the CSS gap:3% between poles
+      const needed   = 2 * D.bw + interGap + 12;
+      const avail    = w * 0.9;
+      if (needed > avail) D = szForHeight(h * fill * (avail / needed));
+    }
+  }
+  return D;
+}
+
+/* Scale every dimension of a size object by `k` — nudges card-preview poles
+   larger/smaller without re-deriving the height/width fit. */
+function scaleD(D, k) {
+  const s = v => Math.round(v * k * 10) / 10;
+  return { ...D, sw:s(D.sw), bw:s(D.bw), h:s(D.h), shw:s(D.shw), shh:s(D.shh),
+    capH:s(D.capH), ringGap: D.ringGap!=null ? s(D.ringGap) : D.ringGap };
+}
+
+/* Build a poles-wrap HTML sized to fit a given element. `scale` nudges the poles
+   larger/smaller on top of the fitted size (1 = exact fit). */
+function polesHTMLForCard(palIdx, patIdx, el, fill = 0.88, scale = 1, recolor = false, palHexOverride = null) {
+  let D = szForEl(el, fill);
+  if (scale !== 1) D = scaleD(D, scale);
+  return `<div class="poles-wrap">${buildPolesFromPattern(palIdx, patIdx, [], D, recolor, palHexOverride)}</div>`;
+}
+
+/* Navigation history stack — records every screen the user visits (except the
+   landing page) so the back button returns to the *previous* screen rather than
+   a hardcoded destination. Cleared whenever the user lands back on 'land'. */
+let navHistory = [];
+
+function goTo(id, record=true) {
+  // Push the screen we're leaving so back can return to it (never push landing).
+  if (record) {
+    const current = document.querySelector('.screen.active');
+    if (current) {
+      const curId = current.id.replace(/^s-/, '');
+      if (curId !== 'land' && curId !== id) navHistory.push(curId);
+    }
+  }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('s-'+id);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  if (id==='land')      navHistory = [];   // reaching landing resets history
+  if (id==='land')      initLanding();
+  if (id==='e-palette') initChoosePalette();
+  if (id==='e-style')   initChooseStyle();
+  if (id==='custom-palette') initCustomPalette();
+  if (id==='cust')      initCustomiser();
+}
+
+/* Back button — pop the last visited screen and return to it (falling back to
+   the landing page). record=false so the pop itself isn't re-recorded. */
+function goBack() {
+  const prev = navHistory.pop() || 'land';
+  goTo(prev, false);
+}
+
+/* entry flow state.
+   customPalette: null, or an array of hex values for a user-built palette.
+   styleBackTo:   which screen the style picker's Back arrow returns to
+                  ('e-palette' for the standard flow, 'custom-palette' when we
+                  arrived from the "Make your own palette" flow). */
+const E = { palette:null, pattern:null, customPalette:null, styleBackTo:'e-palette' };
+
+/* Start the "Choose a style" flow: palette (step 1) → style (step 2) → editor. */
+function startChooseStyle() {
+  window._learnq = window._learnq || [];
+  window._learnq.push(['track', 'Entry Path Chosen', { path: 'palette_style' }]);
+  E.palette = null; E.pattern = null; E.customPalette = null; goTo('e-palette');
+}
+
+/* Step 1 pick: palette index, or null for "Use all colors". */
+function pickChoosePalette(i) {
+  E.palette = i; E.customPalette = null; E.styleBackTo = 'e-palette';
+  if (i !== null) {
+    window._learnq = window._learnq || [];
+    window._learnq.push(['track', 'Palette Selected', {
+      palette_index: i,
+      palette_colors: PALETTES[i].map(hex => hex),
+      is_custom: false
+    }]);
+  }
+  goTo('e-style');
+}
+
+/* Style picker Back arrow — returns to whichever screen preceded it. */
+function styleBack() { goTo(E.styleBackTo || 'e-palette'); }
+/* Step 2 pick: pattern index, or null for "No style — go straight to editor". */
+function pickChooseStyle(i)   {
+  E.pattern = i;
+  window._learnq = window._learnq || [];
+  window._learnq.push(['track', 'Style Selected', i !== null
+    ? { style_name: PATTERNS[i].name, style_index: i }
+    : { style_name: 'none', style_index: null }]);
+  launchChooseStyle();
+}
+
+/* ══════════════════════════════════════════════════
+   LANDING
+   ══════════════════════════════════════════════════ */
+function initLanding() {
+  /* "Choose a style" card — cycles through style pole previews (native colors) */
+  const styleVis = document.getElementById('land-style-vis');
+  if (styleVis && !styleVis._built) {
+    styleVis._built = true;
+    styleVis.style.transition='opacity 0.3s';
+    let pi = 0;
+    /* Double rAF so the card is fully painted and at its final height before we
+       measure once; the stored D is then reused for every cycle (no re-measure). */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const D = scaleD(szForEl(styleVis), isMobile() ? 1.3 : 1.15);   // landing card: 15% larger on desktop, smaller on mobile
+      D.cornerRadiusMultiplier = 0.5;   // landing previews only: fully-rounded ends so tiny rings never look blocky
+      const draw = idx => `<div class="poles-wrap">${buildPolesFromPattern(PATTERNS[idx].defaultPalette, idx, [], D)}</div>`;
+      styleVis.innerHTML = draw(0);
+      const render = () => {
+        styleVis.style.opacity='0';
+        setTimeout(()=>{ styleVis.innerHTML = draw(pi); styleVis.style.opacity='1'; },180);
+      };
+      setInterval(()=>{ pi=(pi+1)%PATTERNS.length; render(); }, 1500);
+    }));
+  }
+  /* Scratch — all black, sized to fill the card the same way as the pattern card */
+  const scrVis = document.getElementById('land-scratch-vis');
+  if (scrVis && !scrVis._built) {
+    scrVis._built = true;
+    /* Double rAF so the container has its final dimensions before measuring once */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const D = scaleD(szForEl(scrVis), isMobile() ? 1.3 : 1.15);   // landing card: 15% larger on desktop, smaller on mobile
+      D.cornerRadiusMultiplier = 0.5;   // landing previews only: fully-rounded ends so tiny rings never look blocky
+      scrVis.innerHTML = blackPolesHTML(D);
+    }));
+  }
+}
+
+/* Split a palette into display rows. Drives every palette swatch in the app:
+     3 → [3]          (single horizontal row)
+     4 → [2,2]        (2×2 grid)
+     5 → [3,2]        (3 on top, 2 centered below)
+     6 → [3,3]        (two rows of 3)
+   Adding new palette sizes "just works" — ≤3 stays one row, otherwise it
+   splits into a fuller top row and a centered remainder below. */
+function palRows(pal) {
+  const n = pal.length;
+  if (n <= 3) return [pal];
+  const top = Math.ceil(n / 2);
+  return [pal.slice(0, top), pal.slice(top)];
+}
+
+function palSqHTML(pal) {
+  const rows = palRows(pal);
+  /* Size squares off a shared baseline of 3 cols so every palette (3,4,5,6…)
+     renders identically-sized squares; smaller rows just center. */
+  const cols = Math.max(3, ...rows.map(r => r.length));
+  const sq = h => `<div class="pal-sq" style="background:${h};${h.toLowerCase()==='#ffffff'?'border:1.5px solid rgba(0,0,0,0.13);':''}"></div>`;
+  const html = rows.map(r => `<div class="pal-sq-row">${r.map(sq).join('')}</div>`).join('');
+  return `<div class="pal-sq-stack" style="--cols:${cols}">${html}</div>`;
+}
+
+function palSqHTMLAll() {
+  // Every color in a balanced, square-ish grid — cols from √count, rows to fit.
+  // 16 colors → 4×4 (unchanged); any other count adapts automatically.
+  const cols = Math.ceil(Math.sqrt(COLORS.length));
+  const rows = Math.ceil(COLORS.length / cols);
+  const sq = c => `<div class="pal-sq" style="background:${c.hex};${c.hex==='#FFFFFF'?'border:1.5px solid rgba(0,0,0,0.13);':''}"></div>`;
+  // Desktop keeps the square-ish CSS grid; mobile uses an explicit two-row flex
+  // layout (8 + 7). CSS toggles which one is visible per breakpoint.
+  const grid = `<div class="pal-sq-grid-all" style="--cols:${cols};--rows:${rows}">${COLORS.map(sq).join('')}</div>`;
+  const rowHTML = cs => `<div class="pal-sq-mrow">${cs.map(sq).join('')}</div>`;
+  const mobile = `<div class="pal-sq-rows-all">${rowHTML(COLORS.slice(0,8))}${rowHTML(COLORS.slice(8,15))}</div>`;
+  return grid + mobile;
+}
+
+/* ══════════════════════════════════════════════════
+   ENTRY SCREENS
+   ══════════════════════════════════════════════════ */
+/* STEP 1 — palette picker. "Use all colors" (E.palette=null) first, then all
+   58 palettes as scrollable cards in the existing palette-card style. */
+function initChoosePalette() {
+  const grid = document.getElementById('cs-pal-grid');
+  if (!grid) return;
+  const allCard = `
+    <div class="flow-card" onclick="pickChoosePalette(null)">
+      <div class="flow-card-visual">${palSqHTMLAll()}</div>
+      <div class="flow-card-footer style-name"><div class="flow-card-label">Use all colors</div></div>
+    </div>`;
+  const palCards = PALETTES.map((pal,i) => `
+    <div class="flow-card" onclick="pickChoosePalette(${i})">
+      <div class="flow-card-visual">${palSqHTML(pal)}</div>
+    </div>`).join('');
+  const makeCard = `
+    <div class="flow-card" onclick="goTo('custom-palette')">
+      <div class="flow-card-visual"><div class="cp-plus-icon">+</div></div>
+      <div class="flow-card-footer style-name"><div class="flow-card-label">Make your own palette</div></div>
+    </div>`;
+  grid.innerHTML = allCard + palCards + makeCard;
+}
+
+/* ══════════════════════════════════════════════════
+   MAKE YOUR OWN PALETTE
+   Build a 2–6 color palette from the full COLORS set, then carry it into the
+   style picker / customiser via E.customPalette. cpSlots holds one hex (or null
+   for empty) per slot; no duplicates are allowed. ══════════════════════════════════════════════════ */
+let cpSlots = [null, null, null, null];
+
+function initCustomPalette() {
+  cpSlots = [null, null, null, null];   // fresh 4 empty slots each visit
+  renderCPGrid();
+  renderCPSlots();
+}
+
+/* Color grid — all COLORS in customiser order; selected swatches get a ring. */
+function renderCPGrid() {
+  const grid = document.getElementById('cp-color-grid');
+  if (!grid) return;
+  grid.innerHTML = COLORS.map(c => {
+    const sel  = cpSlots.some(s => s && s.toLowerCase()===c.hex.toLowerCase());
+    // 3px ring in the swatch's own color; box-shadow keeps it within the element
+    // bounds so it never bleeds into the color name below.
+    const ring = sel ? `box-shadow:0 0 0 3px ${c.hex};` : '';
+    return `<div class="cp-swatch${sel?' selected':''}" onclick="cpToggleColor('${c.hex}')">
+      <div class="cp-swatch-circle" style="background:${c.hex};${ring}"></div>
+      <div class="cp-swatch-name">${c.name}</div>
+    </div>`;
+  }).join('');
+}
+
+/* Slot row — one square per slot (dashed when empty, solid when filled), plus a
+   "+" to add slots up to 6, and the Next button's enabled/disabled state. */
+function renderCPSlots() {
+  const row = document.getElementById('cp-slot-row');
+  if (!row) return;
+  let html = cpSlots.map((hex,i) => {
+    if (hex) {
+      const border = hex.toLowerCase()==='#fffae0' ? 'border-color:rgba(0,0,0,0.18);' : '';
+      return `<button class="cp-slot filled" style="background:${hex};${border}" onclick="cpRemoveSlot(${i})" aria-label="Remove color"></button>`;
+    }
+    return `<div class="cp-slot empty"></div>`;
+  }).join('');
+  if (cpSlots.length < 6) html += `<button class="cp-slot-add" onclick="cpAddSlot()" aria-label="Add slot">+</button>`;
+  row.innerHTML = html;
+  const btn = document.getElementById('cp-next-btn');
+  if (btn) btn.disabled = cpSlots.filter(Boolean).length < 2;
+}
+
+/* Tap a color: remove+deselect if already used, else drop into the next empty slot. */
+function cpToggleColor(hex) {
+  const at = cpSlots.findIndex(s => s && s.toLowerCase()===hex.toLowerCase());
+  if (at !== -1) {
+    cpSlots[at] = null;                 // already in a slot → remove & deselect
+  } else {
+    const empty = cpSlots.findIndex(s => !s);
+    if (empty === -1) return;           // no free slot — add one with "+" first
+    cpSlots[empty] = hex;
+  }
+  renderCPGrid();
+  renderCPSlots();
+}
+
+/* Tap a filled slot: free it (and deselect the color in the grid above). */
+function cpRemoveSlot(i) {
+  cpSlots[i] = null;
+  renderCPGrid();
+  renderCPSlots();
+}
+
+function cpAddSlot() {
+  if (cpSlots.length >= 6) return;
+  cpSlots.push(null);
+  renderCPSlots();
+}
+
+/* Next → carry the custom palette into the style picker. */
+function customPaletteNext() {
+  const pal = cpSlots.filter(Boolean);
+  if (pal.length < 2) return;
+  E.palette       = null;         // no standard palette selected
+  E.customPalette = pal;
+  E.pattern       = null;
+  E.styleBackTo   = 'custom-palette';
+  window._learnq = window._learnq || [];
+  window._learnq.push(['track', 'Palette Selected', {
+    palette_colors: E.customPalette,
+    is_custom: true
+  }]);
+  goTo('e-style');
+}
+
+/* STEP 2 — style picker. Every style rendered in the chosen palette colors
+   (E.palette) or default colors (all-colors path), plus a final "No style"
+   card (E.pattern=null) that goes straight to the editor. */
+function initChooseStyle() {
+  const grid = document.getElementById('cs-style-grid');
+  if (!grid) return;
+  const palOverride = E.customPalette || null;      // custom palette hex array, if any
+  const recolor = E.palette !== null || palOverride !== null;  // recolor previews into the palette
+  const palIdx  = E.palette;                        // null → native (all colors)
+  const styleCards = PATTERNS.map((pat,i) => `
+    <div class="flow-card" onclick="pickChooseStyle(${i})">
+      <div class="flow-card-visual" data-pat="${i}"></div>
+      <div class="flow-card-footer style-name"><div class="flow-card-label">${pat.name}</div></div>
+    </div>`).join('');
+  const noStyleCard = `
+    <div class="flow-card" onclick="pickChooseStyle(null)">
+      <div class="flow-card-visual"><div class="mystery-q-big" style="font-size:clamp(3rem,10vw,6rem);">✎</div></div>
+      <div class="flow-card-footer style-name"><div class="flow-card-label">Go straight to editor</div></div>
+    </div>`;
+  grid.innerHTML = noStyleCard + styleCards;
+  // Render poles after layout settles. Double rAF so the fixed card/visual height
+  // is final before we measure each visual and size its poles to match. Mobile
+  // style cards are taller, so enlarge the poles beyond the proportional growth.
+  const poleScale = isMobile() ? 1.2 : 1;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    grid.querySelectorAll('.flow-card-visual[data-pat]').forEach(el => {
+      const pi = +el.dataset.pat;
+      // Tall style-picker cards: fill 0.78 of the visual so poles keep a clear
+      // top/bottom margin and never look clipped against the card edges.
+      el.innerHTML = polesHTMLForCard(palIdx, pi, el, 0.78, poleScale, recolor, palOverride);
+    });
+  }));
+}
+
+/* ── Launch function ── */
+/* Launch the customiser from the "Choose a style" flow.
+   E.palette null → all colors; E.pattern null → no style.
+     palette + style → constrain to palette, load style (recolored), slot mode
+     palette + no style → constrain to palette, free mode, blank poles
+     all colors + style → no palette constraint, load style (native), slot mode
+     all colors + no style → no constraints, free mode (same as build from scratch) */
+function launchChooseStyle() {
+  resetState();
+  S.constrainedPalette = E.palette;               // null when all colors / custom palette
+  S.customPalette      = E.customPalette || null; // user-built palette, if any
+  S.patternLoaded      = E.pattern;               // null when no style
+  S.unlocked           = false;
+  const recolor = E.palette !== null || S.customPalette !== null;
+  if (E.pattern !== null) {
+    applyPattern(E.pattern, E.palette, recolor, S.customPalette);
+  }
+  S.slotMode = E.pattern !== null;                // slot mode only when a style is chosen
+  window._learnq = window._learnq || [];
+  window._learnq.push(['track', 'Customiser Opened', {
+    entry_path: E.palette !== null ? 'palette_style' : 'scratch',
+    has_palette: E.palette !== null || E.customPalette !== null,
+    has_style: E.pattern !== null,
+    style_name: E.pattern !== null ? PATTERNS[E.pattern].name : null
+  }]);
+  goTo('cust');
+}
+
+function startScratch() {
+  window._learnq = window._learnq || [];
+  window._learnq.push(['track', 'Entry Path Chosen', { path: 'scratch' }]);
+  resetState();
+  S.constrainedPalette = null;
+  S.patternLoaded = null;
+  S.unlocked = true;
+  window._learnq.push(['track', 'Customiser Opened', {
+    entry_path: 'scratch',
+    has_palette: false,
+    has_style: false,
+    style_name: null
+  }]);
+  goTo('cust');
+}
+
+function applyPattern(patIdx, palIdx, recolor = false, palHexOverride = null) {
+  const pat = PATTERNS[patIdx];
+  const resolve = styleColorFor(pat, palIdx, recolor, palHexOverride);
+  S.p1 = pat.p1.map(resolve);
+  S.p2 = pat.p2.map(resolve);
+  /* record each ring's raw pattern slot index so slot mode can group rings */
+  S.slotP1 = pat.p1.slice();
+  S.slotP2 = pat.p2.slice();
+  S.big = new Set(pat.noLedges ? [0] : (pat.ledges ? pat.ledges : DEF_BIG));
+}
+
+function resetState() {
+  S.p1 = new Array(N).fill(BLACK);
+  S.p2 = new Array(N).fill(BLACK);
+  S.big = new Set(DEF_BIG);
+  S.history = [];
+  S.activeColor = null;
+  S.pendingTool = null;
+  S.fillMode = false;
+  S.adjustLedgesMode = false;
+  S.ledgeBrush = null;
+  S.pulsed = false;
+  S.constrainedPalette = null;
+  S.customPalette = null;
+  S.patternLoaded = null;
+  S.unlocked = false;
+  S.slotMode = false;
+  S.activeSlot = null;
+  S.slotP1 = null;
+  S.slotP2 = null;
+  S.prevP1 = {};
+  S.prevP2 = {};
+  S.prevSlotColors = {};
+}
+
+/* ══════════════════════════════════════════════════
+   CUSTOMISER INIT
+   ══════════════════════════════════════════════════ */
+function initCustomiser() {
+  zoom = { scale:1, tx:0, ty:0 };   // start un-zoomed each time we enter the editor
+  buildColorPicker();
+  buildConstraintToggles();
+  buildSlotRow();
+  refreshPoles();
+
+  /* Opening from a style path (slot mode) → pre-select the Main Color slot so the
+     user can immediately tap a color to apply it, without first tapping a slot.
+     Uses the same handler as tapping a slot. Switching slots afterwards, or
+     switching to free mode, is still driven by the user (toggleEditMode clears
+     the selection when leaving slot mode). */
+  if (S.slotMode) {
+    const _slots = computeSlots();
+    if (_slots.length) selectSlot(_slots[0].slot);
+  }
+
+  /* Re-fit whenever the controls panel grows or shrinks (i.e. the control row
+     count changes). We observe the controls-panel — not the poles-stage — because
+     the stage is now JS-sized (flex:none) and no longer auto-resizes. On each
+     change recompute the explicit stage height, then re-size the rings to it. */
+  if (window._polesObserver) window._polesObserver.disconnect();
+  window._polesObserver = new ResizeObserver(() => {
+    // rAF: run AFTER the browser finishes laying out the resized controls panel,
+    // so the height math reads settled values.
+    requestAnimationFrame(() => { setPolesStageHeight(); refreshPoles(); });
+  });
+  const _cp = document.querySelector('#s-cust .controls-panel');
+  if (_cp) window._polesObserver.observe(_cp);
+
+  // Initial explicit sizing once the controls panel has laid out.
+  requestAnimationFrame(() => { setPolesStageHeight(); refreshPoles(); });
+
+  /* ══════════════════════════════════════════════════
+     TOUCH — drag-paint + pinch / double-tap zoom (mobile).
+     Wired once per poles-stage (guarded so re-entering the customiser doesn't
+     stack duplicate listeners). {passive:false} on start/move lets
+     preventDefault() stop the page from scrolling/zooming while we handle the
+     gesture ourselves. ══════════════════════════════════════════════════ */
+  const stage = document.getElementById('poles-stage');
+  if (stage && !stage._touchWired) {
+    stage._touchWired = true;
+
+    function getTouchRing(e) {
+      const t = e.touches[0];
+      let el = document.elementFromPoint(t.clientX, t.clientY);
+      while (el && !el.dataset.pole) el = el.parentElement;
+      if (!el || !el.dataset.pole) return null;
+      return { pole: el.dataset.pole, idx: +el.dataset.idx };
+    }
+    const _dist = (a, b) => Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+    const _mid  = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
+
+    stage.addEventListener('touchstart', function(e) {
+      // Two fingers → pinch-zoom (mobile only)
+      if (isMobile() && e.touches.length === 2) {
+        e.preventDefault();
+        _touchGesture = 'pinch';
+        drag.active = false;
+        const m = _mid(e.touches[0], e.touches[1]);
+        _pinchStart = { dist:_dist(e.touches[0], e.touches[1]), scale:zoom.scale, fx:m.x, fy:m.y, tx:zoom.tx, ty:zoom.ty };
+        return;
+      }
+      // Zoomed in → one finger pans (double-tap zooms back out)
+      if (isMobile() && zoom.scale > 1.01 && e.touches.length === 1) {
+        const now = Date.now();
+        if (now - _lastTap < 300) { _lastTap = 0; _touchGesture = null; e.preventDefault(); toggleDoubleTapZoom(e.touches[0]); return; }
+        _lastTap = now;
+        e.preventDefault();
+        _touchGesture = 'pan';
+        _panStart = { x:e.touches[0].clientX, y:e.touches[0].clientY, tx:zoom.tx, ty:zoom.ty, moved:false };
+        return;
+      }
+      // Not zoomed → watch for a double-tap to zoom in (first tap still paints)
+      if (isMobile() && e.touches.length === 1) {
+        const now = Date.now();
+        if (now - _lastTap < 300) { _lastTap = 0; _touchGesture = null; e.preventDefault(); toggleDoubleTapZoom(e.touches[0]); return; }
+        _lastTap = now;
+      }
+
+      // ── Drag-paint ──
+      e.preventDefault();
+      _touchGesture = 'paint';
+      drag.active = true;
+      drag.painted = new Set();
+      if (!S.activeColor && !S.adjustLedgesMode) return;
+      // Fill toggle ON: a single tap floods every matching color across both poles
+      // (applyFlood snapshots history itself and keeps Fill on). Drag continues to
+      // flood any further rings the finger passes over — see the touchmove handler.
+      if (S.fillMode) {
+        const r = getTouchRing(e);
+        if (r) applyFlood(r.pole, r.idx);
+        return;
+      }
+      pushHistory();
+      const r = getTouchRing(e);
+      if (r) {
+        if (S.adjustLedgesMode) applyLedgeBrush(r.pole, r.idx);
+        else { paintRing(r.pole, r.idx, S.activeColor); drag.painted.add(r.pole+r.idx); }
+        refreshPoles();
+      }
+    }, { passive: false });
+
+    stage.addEventListener('touchmove', function(e) {
+      if (_touchGesture === 'pinch' && e.touches.length >= 2) {
+        e.preventDefault();
+        const d = _dist(e.touches[0], e.touches[1]);
+        const s = Math.max(1, Math.min(3, _pinchStart.scale * (d / _pinchStart.dist)));
+        const rect = stage.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        // keep the pinch midpoint anchored as scale changes (transform-origin 50% 50%)
+        const dlx = (_pinchStart.fx - cx - _pinchStart.tx) / _pinchStart.scale;
+        const dly = (_pinchStart.fy - cy - _pinchStart.ty) / _pinchStart.scale;
+        zoom.scale = s;
+        zoom.tx = _pinchStart.fx - cx - s * dlx;
+        zoom.ty = _pinchStart.fy - cy - s * dly;
+        clampZoom(); applyZoom();
+        return;
+      }
+      if (_touchGesture === 'pan' && e.touches.length === 1) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - _panStart.x, dy = e.touches[0].clientY - _panStart.y;
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) _panStart.moved = true;
+        zoom.tx = _panStart.tx + dx; zoom.ty = _panStart.ty + dy;
+        clampZoom(); applyZoom();
+        return;
+      }
+      if (_touchGesture === 'paint') {
+        e.preventDefault();
+        if (!drag.active) return;
+        const r = getTouchRing(e);
+        if (!r) return;
+        // Fill toggle ON: flood each ring the finger drags over (applyFlood is a
+        // no-op once a ring already holds the active color, so it won't re-run).
+        if (S.fillMode) { applyFlood(r.pole, r.idx); return; }
+        if (S.activeColor && !S.adjustLedgesMode) {
+          const key = r.pole + r.idx;
+          if (!drag.painted.has(key)) {
+            paintRing(r.pole, r.idx, S.activeColor);
+            drag.painted.add(key);
+            refreshPoles();
+          }
+        }
+      }
+    }, { passive: false });
+
+    stage.addEventListener('touchend', function(e) {
+      // A tap (no drag) while zoomed acts on the ring under the finger
+      if (_touchGesture === 'pan' && _panStart && !_panStart.moved) {
+        const t = e.changedTouches[0];
+        let el = document.elementFromPoint(t.clientX, t.clientY);
+        while (el && !el.dataset.pole) el = el.parentElement;
+        if (el && el.dataset.pole) ringClick(el.dataset.pole, +el.dataset.idx);
+      }
+      // Snap back to 1x if a pinch landed at (or below) the minimum
+      if (_touchGesture === 'pinch' && zoom.scale <= 1.01) {
+        zoom.scale = 1; zoom.tx = 0; zoom.ty = 0; applyZoom();
+      }
+      if (e.touches.length === 0) { _touchGesture = null; drag.active = false; }
+    }, { passive: false });
+  }
+
+  updateRingInfo();
+  updateUndoBtn();
+  updateFillBtn();
+  updateAdjustLedgesBtn();
+  closePatternSwap();
+  if (!S.pulsed) { setTimeout(fireAffordance,600); S.pulsed=true; }
+}
+
+function buildColorPicker() {
+  const colors = availColors();
+  const row = document.getElementById('color-picker-row');
+  /* When the full color set is in play (not a constrained palette), let the picker fill the panel */
+  const allColors = (S.unlocked || (S.constrainedPalette===null && !S.customPalette));
+  const wrap = row.closest('.color-picker-scroll-wrap');
+  if (wrap) {
+    wrap.classList.toggle('all-colors', allColors);
+    wrap.classList.toggle('palette-rows', !allColors);
+  }
+  const cpick = c => {
+    const border = c.hex==='#FFFFFF' ? 'border-color:rgba(0,0,0,0.15);' : '';
+    const isActive = S.activeColor && S.activeColor.toLowerCase()===c.hex.toLowerCase();
+    return `<div class="cpick${isActive?' active':''}" onclick="selectColor('${c.hex}','${c.name}')">
+      <div class="cpick-circle" style="background:${c.hex};${border}"></div>
+      <div class="cpick-name">${c.name}</div>
+    </div>`;
+  };
+  if (allColors) {
+    /* Desktop lays the full set out as a grid; derive its column count from √count
+       so any number of colors stays balanced (16 → 4 cols, unchanged). */
+    row.style.setProperty('--allcols', Math.ceil(Math.sqrt(colors.length)));
+    row.innerHTML = colors.map(cpick).join('');
+  } else {
+    /* Palette: split across 3 rows, remainder added to the middle row, each row centered */
+    row.innerHTML = splitThreeRows(colors)
+      .map(r => `<div class="cpick-row">${r.map(cpick).join('')}</div>`)
+      .join('');
+  }
+  updateActiveColorBar();
+}
+
+/* Split a list into [top, middle, bottom]; any remainder goes to the middle row */
+function splitThreeRows(arr) {
+  const n = arr.length, base = Math.floor(n/3), rem = n % 3;
+  const counts = [base, base + rem, base];
+  const out = []; let i = 0;
+  counts.forEach(c => { out.push(arr.slice(i, i+c)); i += c; });
+  return out;
+}
+
+function availColors() {
+  if (S.unlocked) return COLORS;
+  if (S.customPalette) return S.customPalette.map(colorForHex);
+  if (S.constrainedPalette===null) return COLORS;
+  return paletteColors(S.constrainedPalette);
+}
+
+function updateActiveColorBar() {
+  const sw  = document.getElementById('active-swatch');
+  const lbl = document.getElementById('active-label');
+  const hint= document.getElementById('active-hint');
+  /* highlight the All One button while it's waiting for a color pick */
+  const aoBtn = document.getElementById('all-one-btn');
+  if (aoBtn) aoBtn.classList.toggle('pending', S.pendingTool==='all-one');
+  if (S.adjustLedgesMode) {
+    sw.style.background = 'transparent';
+    lbl.textContent = S.ledgeBrush ? (S.ledgeBrush==='ledge' ? 'Ledge brush' : 'Ring brush') : 'Adjust ledges';
+    hint.textContent = S.ledgeBrush ? 'tap a ring to change it' : 'pick a shape below';
+    return;
+  }
+  if (S.pendingTool==='all-one') {
+    sw.style.background  = 'linear-gradient(135deg,#f00,#00f)';
+    lbl.textContent = 'All one color';
+    hint.textContent = 'pick a color to fill all rings';
+    return;
+  }
+  if (S.fillMode) {
+    if (S.activeColor) {
+      sw.style.background = S.activeColor;
+      const c = COLORS.find(x=>x.hex.toLowerCase()===S.activeColor.toLowerCase());
+      lbl.textContent = c ? `Fill: ${c.name}` : 'Fill';
+      hint.textContent = 'tap a ring to flood';
+    } else {
+      sw.style.background = 'transparent';
+      lbl.textContent = 'Fill mode';
+      hint.textContent = 'pick a color first';
+    }
+    return;
+  }
+  if (S.slotMode) {
+    if (S.activeSlot===null) {
+      sw.style.background = 'transparent';
+      lbl.textContent = 'Pick a color slot';
+      hint.textContent = 'tap a slot above';
+    } else {
+      const slot = computeSlots().find(s=>s.slot===S.activeSlot);
+      sw.style.background = slot ? slot.hex : 'transparent';
+      lbl.textContent = slot ? slot.label : 'Color slot';
+      hint.textContent = 'pick a color to apply';
+    }
+    return;
+  }
+  if (S.activeColor) {
+    sw.style.background  = S.activeColor;
+    const c = COLORS.find(x=>x.hex.toLowerCase()===S.activeColor.toLowerCase());
+    lbl.textContent = c ? c.name : 'Custom';
+    const hintText = window.innerWidth <= 739
+      ? 'tap to color'
+      : 'tap or drag to color';
+    hint.textContent = hintText;
+  } else {
+    sw.style.background  = 'transparent';
+    lbl.textContent = 'Pick a color below';
+    hint.textContent = 'then tap or drag to color';
+  }
+}
+
+function buildConstraintToggles() {
+  const row = document.getElementById('ctrl-toggles');
+  const unlockBtn = document.getElementById('unlock-colors-btn');
+  const changePatBtn = document.getElementById('change-pattern-btn');
+  const modeBtn = document.getElementById('edit-mode-btn');
+  const showUnlock = S.constrainedPalette!==null || S.customPalette!==null;
+  const showMode   = S.patternLoaded!==null;   // mode toggle lives only while a pattern is bound
+  // Row is shown if either the unlock pill or the edit-mode pill is visible
+  row.style.display = (showUnlock || showMode) ? 'flex' : 'none';
+  if (unlockBtn) {
+    unlockBtn.textContent = S.unlocked ? 'Use my palette' : 'Use all colors';
+    unlockBtn.classList.toggle('on', S.unlocked);
+    unlockBtn.style.display = showUnlock ? '' : 'none';
+  }
+  if (modeBtn) {
+    modeBtn.textContent = S.slotMode ? 'Edit without pattern' : 'Edit with your pattern';
+    modeBtn.classList.toggle('on', S.slotMode);
+    modeBtn.style.display = showMode ? '' : 'none';
+  }
+  if (changePatBtn) {
+    changePatBtn.style.display = S.patternLoaded!==null ? '' : 'none';
+  }
+}
+
+/* ── Slot mode: derive color slots from the loaded pattern ── */
+function computeSlots() {
+  if (!S.slotP1 || !S.slotP2) return [];
+  const weight = {};   // slotId -> visual weight (ledges count 3×, others 1×)
+  const order  = [];   // first-seen order, used as a stable tiebreak
+  const tally = arr => arr.forEach((sid,idx) => {
+    const w = (S.big.has(idx) && idx!==0) ? 3 : 1;
+    if (!(sid in weight)) { weight[sid]=0; order.push(sid); }
+    weight[sid] += w;
+  });
+  tally(S.slotP1); tally(S.slotP2);
+  const labels = ['Main Color','Secondary Color','Third Color','Accent','Accent 2','Detail'];
+  const ids = order.slice().sort((a,b) => (weight[b]-weight[a]) || (order.indexOf(a)-order.indexOf(b)));
+  return ids.map((sid,i) => ({ slot:sid, label:labels[i]||'Detail', weight:weight[sid], hex:slotHex(sid) }));
+}
+function slotHex(sid) {
+  for (let i=0;i<N;i++) if (S.slotP1[i]===sid) return S.p1[i];
+  for (let i=0;i<N;i++) if (S.slotP2[i]===sid) return S.p2[i];
+  return BLACK;
+}
+/* Set every ring in a slot to a color without recording a revert target. */
+function setSlotColor(sid, hex) {
+  for (let i=0;i<N;i++) if (S.slotP1[i]===sid) S.p1[i]=hex;
+  for (let i=0;i<N;i++) if (S.slotP2[i]===sid) S.p2[i]=hex;
+}
+/* True when every ring belonging to a slot already shows the given color. */
+function slotAllMatch(sid, hex) {
+  for (let i=0;i<N;i++) if (S.slotP1[i]===sid && S.p1[i]!==hex) return false;
+  for (let i=0;i<N;i++) if (S.slotP2[i]===sid && S.p2[i]!==hex) return false;
+  return true;
+}
+function paintSlot(sid, hex) {
+  // Re-applying the active color to a slot that already fully matches it reverts
+  // the whole slot to the color it held before — a one-step undo on the slot.
+  if (slotAllMatch(sid, hex)) {
+    if (sid in S.prevSlotColors) { setSlotColor(sid, S.prevSlotColors[sid]); delete S.prevSlotColors[sid]; }
+    return;
+  }
+  S.prevSlotColors[sid] = slotHex(sid);
+  setSlotColor(sid, hex);
+}
+function buildSlotRow() {
+  const row = document.getElementById('slot-row');
+  if (!row) return;
+  if (!S.slotMode) { row.style.display='none'; row.innerHTML=''; return; }
+  row.style.display = '';
+  row.innerHTML = computeSlots().map(s => {
+    const active = S.activeSlot===s.slot;
+    const border = s.hex==='#FFFFFF' ? 'border-color:rgba(0,0,0,0.22);' : '';
+    return `<button class="slot-chip${active?' active':''}" onclick="selectSlot(${s.slot})">
+      <span class="slot-chip-sw" style="background:${s.hex};${border}"></span>
+      <span class="slot-chip-lbl">${s.label}</span>
+    </button>`;
+  }).join('');
+}
+function selectSlot(sid) {
+  S.activeSlot = sid;
+  buildSlotRow();
+  refreshPoles();          // highlight every ring in the slot on both poles
+  updateActiveColorBar();
+}
+
+/* ── Switch between pattern (slot) editing and free per-ring editing.
+   Two-way and non-destructive: the pattern binding & current colors are kept,
+   so the user can hop back and forth. ── */
+function toggleEditMode() {
+  turnOffFill(); turnOffAdjustLedges();
+  if (S.slotMode) {
+    /* → free mode: paint individual rings; keep the pattern so we can return */
+    S.slotMode = false;
+    S.activeSlot = null;
+  } else {
+    /* → back to the selected pattern's slot editing */
+    S.slotMode = true;
+    S.activeColor = null;
+  }
+  buildSlotRow();
+  buildConstraintToggles();
+  buildColorPicker();
+  refreshPoles();
+  updateRingInfo();
+  updateActiveColorBar();
+}
+
+/* Toggle the secondary "More tools" toolbar */
+function toggleMoreTools() {
+  const bar = document.getElementById('more-tools-bar');
+  const btn = document.getElementById('more-tools-btn');
+  if (!bar) return;
+  const open = bar.style.display==='none';
+  bar.style.display = open ? '' : 'none';
+  if (btn) {
+    btn.textContent = open ? 'Fewer tools ▴' : 'More tools ▾';
+    btn.classList.toggle('showing-fewer', open);   // lets CSS shrink only the "Fewer tools" label on mobile
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   COLOR SELECTION (color-first)
+   ══════════════════════════════════════════════════ */
+function selectColor(hex, name) {
+  if (S.adjustLedgesMode) return;   // picker is hidden in this mode; ignore stray calls
+  /* Change 3: tapping the already-active color in the picker deselects it (free mode only —
+     in slot mode the picker applies to the active slot, and in fill mode you need a color held) */
+  if (!S.pendingTool && !S.slotMode && !S.fillMode && S.activeColor && S.activeColor.toLowerCase()===hex.toLowerCase()) {
+    S.activeColor = null;
+    buildColorPicker();
+    updateActiveColorBar();
+    return;
+  }
+  S.activeColor = hex;
+  /* "All One" pending: picking any color fills every ring on both poles, then clears pending */
+  if (S.pendingTool==='all-one') {
+    applyAllOne();        /* pushes history, fills p1/p2, clears pendingTool, refreshes */
+    buildColorPicker();   /* reflect the now-active color in the picker */
+    return;
+  }
+  S.pendingTool = null;
+  /* Fill mode: a color pick just arms the flood color — the next ring tap applies it */
+  if (S.fillMode) {
+    buildColorPicker();
+    updateActiveColorBar();
+    return;
+  }
+  /* Slot mode: a color pick recolors every ring in the active slot at once */
+  if (S.slotMode && S.activeSlot!==null) {
+    pushHistory();
+    paintSlot(S.activeSlot, hex);
+    buildColorPicker();
+    refreshPoles();        // also rebuilds the slot row (slot swatch updates)
+    updateActiveColorBar();
+    return;
+  }
+  buildColorPicker();
+  updateActiveColorBar();
+}
+
+/* ══════════════════════════════════════════════════
+   RING INTERACTION
+   ══════════════════════════════════════════════════ */
+function ringClick(poleKey, idx) {
+  if (S.pendingTool==='all-one') { applyAllOne(); return; }
+  /* Adjust Ledges ON: tap applies the ring/ledge shape brush (works in any mode) */
+  if (S.adjustLedgesMode) { applyLedgeBrush(poleKey, idx); return; }
+  /* Fill toggle ON: flood every matching color across both poles (works in free & slot mode) */
+  if (S.fillMode) { applyFlood(poleKey, idx); return; }
+
+  /* Slot mode: recoloring happens through the slot row, never by tapping a single ring */
+  if (S.slotMode) return;
+
+  /* Free mode: if a color is active, paint immediately */
+  if (S.activeColor) {
+    const prev = poleKey==='p1' ? S.prevP1 : S.prevP2;
+    const cur = (poleKey==='p1'?S.p1:S.p2)[idx];
+    /* Tapping a ring that already has the active color with no stored previous
+       color does nothing (paintRing only reverts when there's a prev to restore). */
+    if (cur.toLowerCase()===S.activeColor.toLowerCase() && !(idx in prev)) return;
+    pushHistory();
+    paintRing(poleKey, idx, S.activeColor);
+    refreshPoles();
+    return;
+  }
+  /* No color active — nothing to do */
+}
+
+function paintRing(poleKey, idx, hex) {
+  const arr  = poleKey==='p1' ? S.p1 : S.p2;
+  const prev = poleKey==='p1' ? S.prevP1 : S.prevP2;
+  // Re-applying the active color to a ring that already has it reverts the ring to
+  // the color it held before — a one-step undo on that single ring.
+  if (arr[idx] === hex) {
+    if (idx in prev) { arr[idx] = prev[idx]; delete prev[idx]; }
+    return;
+  }
+  // Otherwise paint normally, remembering the color we're covering up.
+  prev[idx] = arr[idx];
+  arr[idx] = hex;
+}
+
+/* ── Drag to paint ── */
+function dragStart(e) {
+  if (S.slotMode || S.fillMode || S.adjustLedgesMode || !S.activeColor) return;   // these modes don't drag-paint
+  drag.active = true;
+  drag.painted = new Set();
+  pushHistory();
+  const ring = getRingFromEvent(e);
+  if (ring) { paintRing(ring.pole, ring.idx, S.activeColor); drag.painted.add(ring.pole+ring.idx); refreshPoles(); }
+}
+function dragMove(e) {
+  if (!drag.active || !S.activeColor) return;
+  e.preventDefault();
+  const ring = getRingFromEvent(e);
+  if (ring) {
+    const key = ring.pole+ring.idx;
+    if (!drag.painted.has(key)) {
+      paintRing(ring.pole, ring.idx, S.activeColor);
+      drag.painted.add(key);
+      refreshPoles();
+    }
+  }
+}
+function dragEnd() { drag.active=false; }
+
+/* Mouse path: derive the ring under the pointer from a mouse event. */
+function getRingFromEvent(e) {
+  const pt = e.touches ? e.touches[0] : e;
+  let el = document.elementFromPoint(pt.clientX, pt.clientY);
+  while (el && !el.dataset.pole) { el = el.parentElement; }
+  if (!el || !el.dataset.pole) return null;
+  return { pole: el.dataset.pole, idx: +el.dataset.idx };
+}
+
+/* ── Ring nav ── (ring selection removed — kept inert for the now-hidden nav buttons) */
+function navRing(dir) {}
+
+/* Ring selection was removed, so the info/nav row never has anything to show —
+   keep it hidden. Call sites are left in place so this stays a safe no-op. */
+function updateRingInfo() {
+  document.getElementById('ring-info-row')?.classList.add('hidden');
+}
+
+/* ══════════════════════════════════════════════════
+   TOOLS
+   ══════════════════════════════════════════════════ */
+function toggleUnlockColors() {
+  S.unlocked=!S.unlocked;
+  buildColorPicker();
+  buildConstraintToggles();
+}
+
+function openPatternSwap() {
+  turnOffFill(); turnOffAdjustLedges();
+  const panel = document.getElementById('pattern-swap-panel');
+  const grid  = document.getElementById('pattern-swap-grid');
+  panel.style.display='block';
+  /* No Pattern option first */
+  const noPatCard = `<div class="flow-card" style="min-width:80px;min-height:auto;flex-shrink:0;" onclick="swapPattern(null)">
+    <div class="flow-card-visual" style="padding:10px 4px; min-height:60px; align-items:center; justify-content:center; display:flex;">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--lite);">No Pattern</span>
+    </div>
+  </div>`;
+  grid.innerHTML = noPatCard + PATTERNS.map((pat,i)=>`
+    <div class="flow-card" style="min-width:80px;min-height:auto;flex-shrink:0;" onclick="swapPattern(${i})">
+      <div class="flow-card-visual" style="padding:6px 4px;">
+        <div class="poles-wrap" style="gap:4px;">${buildPolesFromPattern(S.constrainedPalette, i, [], SZ.land, S.constrainedPalette!==null||S.customPalette!==null, S.customPalette)}</div>
+      </div>
+    </div>`).join('');
+}
+function closePatternSwap() {
+  const p=document.getElementById('pattern-swap-panel'); if(p) p.style.display='none';
+}
+function swapPattern(idx) {
+  pushHistory();
+  if (idx === null) {
+    /* No pattern — reset to black but keep ledge positions; this also leaves slot mode */
+    S.p1 = new Array(N).fill(BLACK);
+    S.p2 = new Array(N).fill(BLACK);
+    S.patternLoaded = null;
+    S.slotMode = false;
+    S.activeSlot = null;
+    S.slotP1 = null; S.slotP2 = null;
+  } else {
+    const palIdx = S.constrainedPalette;
+    applyPattern(idx, palIdx, palIdx !== null || S.customPalette !== null, S.customPalette);   // refreshes slotP1/slotP2; recolor if constrained
+    S.patternLoaded = idx;
+    S.activeSlot = null;         // old slot ids no longer apply
+  }
+  closePatternSwap();
+  buildSlotRow(); buildConstraintToggles();
+  refreshPoles(); updateActiveColorBar();
+}
+
+/* Fill is a sticky toggle: stays ON across taps until clicked again or another tool is used */
+function doFloodFill() {
+  turnOffAdjustLedges();         // mutually exclusive with Adjust Ledges
+  S.fillMode = !S.fillMode;
+  S.pendingTool = null;          // can't be mid another tool
+  updateFillBtn();
+  updateActiveColorBar();
+}
+function updateFillBtn() {
+  const b = document.getElementById('fill-btn');
+  if (b) {
+    b.classList.toggle('on', S.fillMode);
+    b.textContent = S.fillMode ? '◼ Fill: ON' : '◼ Fill';
+  }
+}
+/* Turn Fill OFF — called whenever another tool/action takes over */
+function turnOffFill() {
+  if (!S.fillMode) return;
+  S.fillMode = false;
+  updateFillBtn();
+}
+function applyFlood(poleKey, idx) {
+  if (!S.activeColor) { flashPickHint(); return; }   // need a paint color first
+  const targetHex = (poleKey==='p1'?S.p1:S.p2)[idx].toLowerCase();
+  if (targetHex === S.activeColor.toLowerCase()) return;   // already that color — nothing to do
+  pushHistory();   // full snapshot before each fill, so each is individually undoable
+  S.p1 = S.p1.map(h=>h.toLowerCase()===targetHex?S.activeColor:h);
+  S.p2 = S.p2.map(h=>h.toLowerCase()===targetHex?S.activeColor:h);
+  /* Fill stays ON for repeated fills */
+  refreshPoles(); updateActiveColorBar();
+}
+/* Briefly nudge the user to pick a color when they try to fill with none selected */
+function flashPickHint() {
+  const hint = document.getElementById('active-hint');
+  if (!hint) return;
+  hint.textContent = 'pick a color first!';
+  hint.style.color = 'var(--accent)';
+  setTimeout(()=>{ hint.style.color=''; updateActiveColorBar(); }, 1200);
+}
+
+/* ══════════════════════════════════════════════════
+   ADJUST LEDGES — sticky toggle, swaps the picker for a ring/ledge shape brush
+   ══════════════════════════════════════════════════ */
+function doAdjustLedges() {
+  S.adjustLedgesMode = !S.adjustLedgesMode;
+  if (S.adjustLedgesMode) {
+    turnOffFill();                 // mutually exclusive with Fill
+    S.pendingTool = null;
+    S.ledgeBrush = null;           // start with no shape chosen
+  } else {
+    S.ledgeBrush = null;
+  }
+  updateAdjustLedgesBtn();
+  applyEditPanelVisibility();
+  updateActiveColorBar();
+}
+function turnOffAdjustLedges() {
+  if (!S.adjustLedgesMode) return;
+  S.adjustLedgesMode = false;
+  S.ledgeBrush = null;
+  updateAdjustLedgesBtn();
+  applyEditPanelVisibility();
+}
+function updateAdjustLedgesBtn() {
+  const b = document.getElementById('adjust-ledges-btn');
+  if (b) {
+    b.classList.toggle('on', S.adjustLedgesMode);
+    /* Abbreviate on mobile so the label never gets clipped in the 5-col toolbar */
+    const m = isMobile();
+    b.textContent = S.adjustLedgesMode
+      ? (m ? '← Colors' : '← Back to Colors')
+      : (m ? '▭ Ledges' : '▭ Adjust Ledges');
+  }
+}
+/* Show the shape brush panel (and hide the picker) while ON; restore everything when OFF */
+function applyEditPanelVisibility() {
+  const picker  = document.querySelector('.color-picker-scroll-wrap');
+  const slotRow = document.getElementById('slot-row');
+  const brush   = document.getElementById('ledge-brush-panel');
+  if (S.adjustLedgesMode) {
+    if (picker)  picker.style.display = 'none';
+    if (slotRow) slotRow.style.display = 'none';
+    if (brush)   { brush.style.display = ''; renderLedgeBrush(); }
+    document.getElementById('ring-info-row')?.classList.add('hidden');
+    refreshPoles();   // drop any slot highlight while in this mode
+  } else {
+    if (brush)  brush.style.display = 'none';
+    if (picker) picker.style.display = '';
+    buildColorPicker();   // picker returns exactly as before
+    buildSlotRow();       // slot row returns if slot mode is active
+    refreshPoles();
+    updateRingInfo();
+  }
+}
+function renderLedgeBrush() {
+  const panel = document.getElementById('ledge-brush-panel');
+  if (!panel) return;
+  const neutral = '#9AA0A6';
+  const ringSel  = S.ledgeBrush==='ring'  ? ' active' : '';
+  const ledgeSel = S.ledgeBrush==='ledge' ? ' active' : '';
+  const count = [...S.big].filter(i=>i!==0).length;
+  panel.innerHTML = `
+    <div class="ledge-brush-hint">Pick a shape, then tap a ring to change it</div>
+    <div class="ledge-brush-opts">
+      <button class="ledge-brush-opt${ringSel}" onclick="selectLedgeBrush('ring')">
+        <div class="ledge-brush-shape">${svgRing(34,16,neutral)}</div>
+        <div class="ledge-brush-lbl">Ring</div>
+      </button>
+      <button class="ledge-brush-opt${ledgeSel}" onclick="selectLedgeBrush('ledge')">
+        <div class="ledge-brush-shape">${svgLedge(54,16,neutral)}</div>
+        <div class="ledge-brush-lbl">Ledge</div>
+      </button>
+    </div>
+    <div class="ledge-brush-count" id="ledge-brush-count">Ledges <span class="lc-num">${count}</span> / ${MAX_LEDGE}</div>
+    <button class="ledge-spacing-learn" onclick="openSpacingPopup()">Learn more about spacing</button>`;
+}
+function selectLedgeBrush(shape) {
+  S.ledgeBrush = shape;
+  renderLedgeBrush();
+  updateActiveColorBar();
+}
+/* Apply the chosen shape to a tapped position. S.big is shared across poles, so the
+   change mirrors to the same index on both poles automatically. */
+function applyLedgeBrush(poleKey, idx) {
+  if (!S.ledgeBrush) return;          // no brush picked yet
+  if (idx===0) return;                // top cap can't change
+  const isBig = S.big.has(idx);
+  if (S.ledgeBrush==='ledge') {
+    if (isBig) return;                // already a ledge
+    if ([...S.big].filter(i=>i!==0).length >= MAX_LEDGE) { flashLedgeLimit(); return; }
+    pushHistory();
+    S.big.add(idx);
+  } else {                            // ring brush
+    if (!isBig) return;               // already a ring
+    pushHistory();
+    S.big.delete(idx);
+  }
+  refreshPoles();
+  renderLedgeBrush();                 // keep the ledge count fresh
+}
+function flashLedgeLimit() {
+  const el = document.getElementById('ledge-brush-count');
+  if (!el) return;
+  el.classList.remove('flash');
+  void el.offsetWidth;               // restart the animation
+  el.classList.add('flash');
+  setTimeout(()=>el.classList.remove('flash'), 900);
+}
+
+function doAllOne() {
+  turnOffFill(); turnOffAdjustLedges();
+  S.pendingTool='all-one';
+  updateActiveColorBar();
+}
+function applyAllOne() {
+  if (!S.activeColor) return;
+  pushHistory();
+  S.p1=new Array(N).fill(S.activeColor);
+  S.p2=new Array(N).fill(S.activeColor);
+  S.pendingTool=null;
+  refreshPoles(); updateActiveColorBar();
+}
+function doRandom() {
+  turnOffFill(); turnOffAdjustLedges();
+  const colors=availColors();
+  pushHistory();
+  const rand=()=>colors[Math.floor(Math.random()*colors.length)].hex;
+  S.p1=S.p1.map(rand); S.p2=S.p2.map(rand);
+  refreshPoles();
+}
+function doMirror() {
+  turnOffFill(); turnOffAdjustLedges();
+  pushHistory(); S.p2=[...S.p1]; refreshPoles();
+}
+/* ── Reset Colors only: all rings → black, ledge positions kept ── */
+function doResetColors() {
+  if (!confirm('Reset all ring colors to black? Ledge positions will be kept.')) return;
+  turnOffFill(); turnOffAdjustLedges();
+  pushHistory();
+  S.p1=new Array(N).fill('#000000');
+  S.p2=new Array(N).fill('#000000');
+  S.pendingTool=null;
+  refreshPoles(); updateActiveColorBar();
+}
+/* ── Reset Ledges only: ledge positions → default set, colors kept ── */
+function doResetLedges() {
+  if (!confirm('Reset ledge positions to default? Colors will be kept.')) return;
+  turnOffFill(); turnOffAdjustLedges();
+  pushHistory();
+  S.big=new Set(DEF_BIG);
+  refreshPoles(); updateRingInfo();
+}
+function doReset() {
+  if (!confirm('Reset all rings and ledge positions?')) return;
+  turnOffFill(); turnOffAdjustLedges();
+  pushHistory();
+  S.p1=new Array(N).fill(BLACK); S.p2=new Array(N).fill(BLACK);
+  S.big=new Set(DEF_BIG); S.pendingTool=null;
+  refreshPoles(); updateRingInfo(); updateUndoBtn();
+}
+/* ══════════════════════════════════════════════════
+   HISTORY / UNDO
+   ══════════════════════════════════════════════════ */
+function pushHistory() {
+  S.history.push({
+    p1:[...S.p1], p2:[...S.p2], big:new Set(S.big),
+    slotP1: S.slotP1?[...S.slotP1]:null, slotP2: S.slotP2?[...S.slotP2]:null
+  });
+  if (S.history.length>30) S.history.shift();
+  updateUndoBtn();
+}
+function doUndo() {
+  if (!S.history.length) return;
+  turnOffFill(); turnOffAdjustLedges();
+  const prev=S.history.pop();
+  S.p1=prev.p1; S.p2=prev.p2; S.big=prev.big;
+  S.slotP1=prev.slotP1; S.slotP2=prev.slotP2;
+  S.pendingTool=null;
+  refreshPoles(); updateRingInfo(); updateUndoBtn(); updateActiveColorBar();
+}
+function updateUndoBtn() {
+  const b=document.getElementById('undo-btn'); if(b) b.disabled=!S.history.length;
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER
+   ══════════════════════════════════════════════════ */
+function refreshPoles() {
+  const el=document.getElementById('poles-stage'); if(!el) return;
+  const D=getDynSz();
+  el.innerHTML=`<div class="poles-wrap">
+    <div class="pole-col"><div class="pole-lbl">Pole 1</div>${buildPoleHTML(S.p1,D,'p1',true)}</div>
+    <div class="pole-col"><div class="pole-lbl">Pole 2</div>${buildPoleHTML(S.p2,D,'p2',true)}</div>
+  </div>
+  <button class="zoom-reset-btn" onclick="resetZoom()" aria-label="Reset zoom">⤢ Reset</button>`;
+  applyZoom();                       // re-apply any active pinch/double-tap zoom to the new poles-wrap
+  if (S.slotMode) buildSlotRow();   // keep slot swatches/weights in sync with ring colors & ledges
+}
+
+/* ══════════════════════════════════════════════════
+   ZOOM (mobile pinch / double-tap) — transform the poles-wrap inside poles-stage
+   ══════════════════════════════════════════════════ */
+function clampZoom() {
+  const stage = document.getElementById('poles-stage');
+  const wrap  = stage && stage.querySelector('.poles-wrap');
+  if (!stage || !wrap) return;
+  const sw = stage.clientWidth, sh = stage.clientHeight;
+  const ww = wrap.offsetWidth * zoom.scale, wh = wrap.offsetHeight * zoom.scale;
+  const maxX = Math.max(0, (ww - sw) / 2), maxY = Math.max(0, (wh - sh) / 2);
+  zoom.tx = Math.max(-maxX, Math.min(maxX, zoom.tx));
+  zoom.ty = Math.max(-maxY, Math.min(maxY, zoom.ty));
+}
+function applyZoom() {
+  const stage = document.getElementById('poles-stage');
+  if (!stage) return;
+  const wrap = stage.querySelector('.poles-wrap');
+  if (wrap) {
+    if (zoom.scale > 1.01 || zoom.tx || zoom.ty) {
+      wrap.style.transformOrigin = '50% 50%';
+      wrap.style.transform = `translate(${zoom.tx}px, ${zoom.ty}px) scale(${zoom.scale})`;
+    } else {
+      wrap.style.transform = '';
+    }
+  }
+  stage.classList.toggle('zoomed', zoom.scale > 1.01);
+}
+function resetZoom() { zoom.scale = 1; zoom.tx = 0; zoom.ty = 0; applyZoom(); }
+function toggleDoubleTapZoom(touch) {
+  if (zoom.scale > 1.01) {
+    zoom.scale = 1; zoom.tx = 0; zoom.ty = 0;
+  } else {
+    const stage = document.getElementById('poles-stage');
+    const rect = stage.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+    const s = 2;
+    zoom.scale = s;
+    zoom.tx = (touch.clientX - cx) * (1 - s);   // keep the tap point anchored
+    zoom.ty = (touch.clientY - cy) * (1 - s);
+  }
+  clampZoom(); applyZoom();
+}
+
+function fireAffordance() {
+  const rings=document.querySelectorAll('#poles-stage .ring-svg');
+  [2,7,14,22,31].forEach((idx,t)=>{
+    if (!rings[idx]) return;
+    setTimeout(()=>{ rings[idx].classList.add('pulse'); setTimeout(()=>rings[idx].classList.remove('pulse'),600); },t*130);
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   SHARE / SAVE / ORDER
+   ══════════════════════════════════════════════════ */
+function encode() {
+  return LZString.compressToEncodedURIComponent(JSON.stringify({v:3,mode:'scratch',p1:S.p1,p2:S.p2,big:[...S.big]}));
+}
+function shareURL() {
+  try {
+    const u=new URL(window.location.href); u.search='';
+    u.searchParams.set('d',encode()); return u.toString();
+  } catch(e){ return window.location.href+'?d='+encode(); }
+}
+let toastTimer=null;
+function showToast(message) {
+  const el=document.getElementById('toast');
+  el.textContent=message;
+  el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2000);
+}
+function doShare() {
+  const url=shareURL();
+  console.log('shareURL():',url);
+  const shareUrl = shareURL();
+  document.querySelector('meta[property="og:url"]')
+    ?.setAttribute('content', shareUrl);
+  document.querySelector('meta[property="twitter:url"]')
+    ?.setAttribute('content', shareUrl);
+  navigator.clipboard.writeText(url).then(()=>{
+    showToast('URL Copied!');
+    window._learnq = window._learnq || [];
+    window._learnq.push(['track', 'Design Shared', {
+      design_url: shareURL()
+    }]);
+  }).catch(()=>prompt('Copy this link:',url));
+}
+function doOrder(track = true) {
+  if (track) {
+    window._learnq = window._learnq || [];
+    window._learnq.push(['track', 'Order Now Clicked', {
+      design_url: shareURL()
+    }]);
+  }
+  /* ── SHOPIFY CHECKOUT URL ──────────────────────────
+     Replace '#' below with your Shopify checkout URL.
+     ─────────────────────────────────────────────── */
+  window.open('#','_blank');
+}
+function doMysteryOrder() {
+  // Open the presale confirmation form in mystery mode instead of checkout.
+  // The comment is read from the mystery screen at submit time.
+  openPresaleForm('mystery');
+}
+function openSave() {
+  buildOvPoles();
+  document.getElementById('ov-email').value='';
+  document.getElementById('ov-confirm').classList.remove('show');
+  document.getElementById('ov-save').classList.add('open');
+}
+function buildOvPoles() {
+  const el = document.getElementById('ov-poles'); if(!el) return;
+  const D = szForEl(el);
+  el.innerHTML=`<div class="pole-col">${buildPoleHTML(S.p1,D,'x',false)}</div>
+                <div class="pole-col">${buildPoleHTML(S.p2,D,'x',false)}</div>`;
+}
+function klaviyoSubscribe(email, listId, properties) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST',
+      'https://a.klaviyo.com/client/subscriptions/?company_id=Yq7u24');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('revision', '2024-06-15');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        console.log('Klaviyo status:', xhr.status, xhr.responseText);
+        resolve(xhr.status);
+      }
+    };
+    xhr.onerror = reject;
+
+    const profileAttributes = { email: email };
+    if (properties && Object.keys(properties).length > 0) {
+      profileAttributes.properties = properties;
+    }
+
+    const payload = {
+      data: {
+        type: 'subscription',
+        attributes: {
+          profile: {
+            data: {
+              type: 'profile',
+              attributes: profileAttributes,
+              subscriptions: {
+                email: {
+                  marketing: {
+                    consent: 'SUBSCRIBED'
+                  }
+                }
+              }
+            }
+          },
+          custom_source: 'twIIgs Configurator'
+        },
+        relationships: {
+          list: {
+            data: {
+              type: 'list',
+              id: listId
+            }
+          }
+        }
+      }
+    };
+
+    xhr.send(JSON.stringify(payload));
+  });
+}
+async function submitSave() {
+  const email = document.getElementById('ov-email').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('ov-email').focus();
+    return;
+  }
+
+  const designUrl = shareURL();
+  const marketingOptIn = document.getElementById('ov-marketing-optin').checked;
+
+  // Identify the user and track the event via Klaviyo onsite JS
+  window._learnq = window._learnq || [];
+
+  // Identify with email and design URL as property
+  window._learnq.push(['identify', {
+    '$email': email,
+    'Design URL': designUrl
+  }]);
+
+  // Track the Design Saved event
+  window._learnq.push(['track', 'Design Saved', {
+    '$email': email,
+    'design_url': designUrl
+  }]);
+
+  // Add to Design Saves list via Klaviyo v3 API
+  await klaviyoSubscribe(email, 'UkMqYU', { design_url: designUrl });
+
+  if (marketingOptIn) {
+    await klaviyoSubscribe(email, 'UcWEqh', {});
+  }
+
+  // Show confirmation popup
+  showSavePopup();
+}
+function closeOv() { document.getElementById('ov-save').classList.remove('open'); }
+
+/* ══════════════════════════════════════════════════
+   PRESALE CONFIRMATION
+   ══════════════════════════════════════════════════ */
+let presaleMysteryFlow = false;
+function openPresaleForm(source = 'customiser') {
+  presaleMysteryFlow = (source === 'mystery');
+  buildPresalePoles();
+  // Mystery flow has no real design — hide the pole preview inside the overlay.
+  const polesBox = document.querySelector('#ov-presale .ov-poles');
+  if (polesBox) polesBox.style.display = presaleMysteryFlow ? 'none' : '';
+  ['pf-first','pf-last','pf-email'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('input-error');
+  });
+  document.getElementById('ov-presale').classList.add('open');
+}
+function buildPresalePoles() {
+  const el = document.getElementById('ov-presale-poles'); if(!el) return;
+  const D = szForEl(el);
+  el.innerHTML=`<div class="pole-col">${buildPoleHTML(S.p1,D,'x',false)}</div>
+                <div class="pole-col">${buildPoleHTML(S.p2,D,'x',false)}</div>`;
+}
+function closePresaleForm() { document.getElementById('ov-presale').classList.remove('open'); }
+
+async function submitPresale() {
+  const firstEl = document.getElementById('pf-first');
+  const lastEl  = document.getElementById('pf-last');
+  const emailEl = document.getElementById('pf-email');
+  const firstName = firstEl.value.trim();
+  const lastName  = lastEl.value.trim();
+  const email     = emailEl.value.trim();
+
+  // Validate — highlight the first empty/invalid field and stop
+  [firstEl, lastEl, emailEl].forEach(el => el.classList.remove('input-error'));
+  let invalid = null;
+  if (!firstName) invalid = firstEl;
+  else if (!lastName) invalid = lastEl;
+  else if (!email || !email.includes('@')) invalid = emailEl;
+  if (invalid) { invalid.classList.add('input-error'); invalid.focus(); return; }
+
+  // Mystery flow has no real design URL — send a sentinel plus the comment.
+  const designUrl = presaleMysteryFlow ? 'SURPRISE ME!' : shareURL();
+
+  // a) Identify the profile
+  window._learnq = window._learnq || [];
+  window._learnq.push(['identify', {
+    '$email': email,
+    '$first_name': firstName,
+    '$last_name': lastName
+  }]);
+
+  // b) Track the event — every confirmation is logged separately
+  if (presaleMysteryFlow) {
+    const commentEl = document.getElementById('mystery-comment');
+    const mysteryComment = commentEl ? commentEl.value.trim() : '';
+    window._learnq.push(['track', 'Design Confirmed', {
+      email: email,
+      first_name: firstName,
+      last_name: lastName,
+      design_url: 'SURPRISE ME!',
+      comment: mysteryComment,
+      confirmed_at: new Date().toISOString()
+    }]);
+  } else {
+    window._learnq.push(['track', 'Design Confirmed', {
+      email: email,
+      first_name: firstName,
+      last_name: lastName,
+      design_url: designUrl,
+      confirmed_at: new Date().toISOString()
+    }]);
+  }
+
+  // c) Add to Presale Designs list
+  await klaviyoSubscribe(email, 'Wp3P6N', {
+    design_url: designUrl,
+    first_name: firstName,
+    last_name: lastName
+  });
+
+  // d) Also add to Design Saves list (same as index.html save behavior)
+  await klaviyoSubscribe(email, 'UkMqYU', { design_url: designUrl });
+
+  showPresalePopup(presaleMysteryFlow);
+}
+let presalePopupTimer = null;
+function showPresalePopup(mystery = false) {
+  closePresaleForm();   // never show the form and popup at the same time
+  document.getElementById('presale-popup-sub').textContent = mystery
+    ? "We've got your design. We'll be in touch as we get closer to production."
+    : "We've got your design. ";
+  document.getElementById('presale-popup').classList.add('open');
+  clearTimeout(presalePopupTimer);
+  presalePopupTimer = setTimeout(closePresalePopup, 15000);
+}
+function closePresalePopup() {
+  clearTimeout(presalePopupTimer);
+  document.getElementById('presale-popup').classList.remove('open');
+}
+
+let savePopupTimer = null;
+function showSavePopup() {
+  closeOv();   // never show the save overlay and popup at the same time
+  document.getElementById('save-popup').classList.add('open');
+  clearTimeout(savePopupTimer);
+  savePopupTimer = setTimeout(closeSavePopup, 6000);
+}
+function closeSavePopup() {
+  clearTimeout(savePopupTimer);
+  document.getElementById('save-popup').classList.remove('open');
+}
+function openSpacingPopup() {
+  document.getElementById('spacing-popup').classList.add('open');
+}
+function closeSpacingPopup() {
+  document.getElementById('spacing-popup').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════════════
+   URL RESTORE
+   ══════════════════════════════════════════════════ */
+function checkURL() {
+  try {
+    const p=new URLSearchParams(window.location.search);
+    if (!p.has('d')) return;
+    let d;
+    try {
+      const decompressed = LZString.decompressFromEncodedURIComponent(p.get('d'));
+      if (decompressed) {
+        d = JSON.parse(decompressed);
+      } else {
+        d = JSON.parse(atob(p.get('d')));
+      }
+    } catch(e) {
+      d = JSON.parse(atob(p.get('d')));
+    }
+    resetState();
+    S.p1  = d.p1||new Array(N).fill(BLACK);
+    S.p2  = d.p2||new Array(N).fill(BLACK);
+    S.big = d.big?new Set(d.big):new Set(DEF_BIG);
+    S.unlocked=true; S.constrainedPalette=null;
+    window._learnq = window._learnq || [];
+    window._learnq.push(['track', 'Customiser Opened', {
+      entry_path: 'shared_link',
+      has_palette: false,
+      has_style: false,
+      style_name: null
+    }]);
+    goTo('cust');
+  } catch(e){}
+}
+
+/* ══════════════════════════════════════════════════
+   MOBILE POLES-STAGE HEIGHT — set explicitly in JS rather than relying on
+   flexbox, which left dead space below the poles at 4–5 control rows.
+   Stage height = viewport − nav − controls, so it always exactly fills the gap.
+   ══════════════════════════════════════════════════ */
+function setPolesStageHeight() {
+  const stage = document.getElementById('poles-stage');
+  if (!stage) return;
+  // Desktop: never JS-size; clear any inline styles a prior mobile pass left.
+  if (window.innerWidth > 739) { stage.style.height = ''; stage.style.flex = ''; return; }
+  // Only meaningful while the customiser is on screen.
+  if (!document.getElementById('s-cust').classList.contains('active')) return;
+  const nav = document.querySelector('#s-cust .nav');
+  const controls = document.querySelector('#s-cust .controls-panel');
+  if (!nav || !controls) return;
+  const navH = nav.getBoundingClientRect().height;
+  const controlsH = controls.getBoundingClientRect().height;
+  const available = window.innerHeight - navH - controlsH;
+  stage.style.height = available + 'px';
+  stage.style.flex = 'none';
+}
+
+/* ══════════════════════════════════════════════════
+   RESIZE
+   ══════════════════════════════════════════════════ */
+let _rz;
+window.addEventListener('resize',()=>{
+  clearTimeout(_rz);
+  // Recompute the explicit mobile stage height (desktop: clears it & returns).
+  setPolesStageHeight();
+  /* On mobile the controls-panel ResizeObserver handles in-editor re-fitting more
+     precisely, so skip the debounced resize refresh there. Desktop unchanged. */
+  if (window.innerWidth <= 739) { refreshPoles(); return; }
+  _rz=setTimeout(()=>{ if(document.getElementById('s-cust').classList.contains('active')) refreshPoles(); },120);
+});
+
+/* ══════════════════════════════════════════════════
+   DESKTOP RECOMMENDATION MODAL (item 1) — once per session, width < 740px
+   ══════════════════════════════════════════════════ */
+const MOBILE_WARN_KEY = 'twiigs_desktop_prompt';
+function dismissMobileWarning() {
+  const el = document.getElementById('desktop-prompt');
+  if (el) el.classList.remove('show');
+  try { sessionStorage.setItem(MOBILE_WARN_KEY, '1'); } catch(e){}
+}
+function maybeShowMobileWarning() {
+  try { if (sessionStorage.getItem(MOBILE_WARN_KEY)) return; } catch(e){}
+  if (window.innerWidth < 740) {
+    const el = document.getElementById('desktop-prompt');
+    if (el) el.classList.add('show');
+  }
+}
+
+/* INIT */
+window._learnq = window._learnq || [];
+window._learnq.push(['track', 'Tool Opened', {
+  source: document.referrer || 'direct',
+  timestamp: new Date().toISOString()
+}]);
+initLanding();
+checkURL();
+maybeShowMobileWarning();
+setPolesStageHeight();   // no-op unless the customiser is the active screen on load
+</script>
+</body>
+</html>
