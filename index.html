@@ -1222,6 +1222,18 @@ body {
     height: 28px;
     border-radius: 3px;
   }
+
+  /* 4-color palettes: flatten the desktop 2×2 into a single centered row of 4
+     (mobile only). Rows use display:contents so their swatches flow directly
+     into the stack, which becomes a horizontal flex row with a 5px gap. */
+  .pal-sq-stack[data-n="4"] {
+    flex-direction: row;
+    gap: 5px;
+  }
+  .pal-sq-stack[data-n="4"] .pal-sq-row { display: contents; }
+  .pal-sq-stack[data-n="4"] .pal-sq {
+    width: calc((100% - 3 * 5px) / 4);
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -2452,7 +2464,7 @@ function palSqHTML(pal) {
   const cols = Math.max(3, ...rows.map(r => r.length));
   const sq = h => `<div class="pal-sq" style="background:${h};${h.toLowerCase()==='#ffffff'?'border:1.5px solid rgba(0,0,0,0.13);':''}"></div>`;
   const html = rows.map(r => `<div class="pal-sq-row">${r.map(sq).join('')}</div>`).join('');
-  return `<div class="pal-sq-stack" style="--cols:${cols}">${html}</div>`;
+  return `<div class="pal-sq-stack" data-n="${pal.length}" style="--cols:${cols}">${html}</div>`;
 }
 
 function palSqHTMLAll() {
