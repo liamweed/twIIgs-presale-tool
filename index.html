@@ -3604,13 +3604,29 @@ function doShare() {
     ?.setAttribute('content', shareUrl);
   document.querySelector('meta[property="twitter:url"]')
     ?.setAttribute('content', shareUrl);
-  navigator.clipboard.writeText(url).then(()=>{
-    showToast('URL Copied!');
+  const track = () => {
     window._learnq = window._learnq || [];
     window._learnq.push(['track', 'Design Shared', {
       design_url: shareURL()
     }]);
-  }).catch(()=>prompt('Copy this link:',url));
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => { showToast('URL Copied!'); track(); });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('URL Copied!');
+      track();
+    } catch(e) {}
+    document.body.removeChild(ta);
+  }
 }
 function doOrder(track = true) {
   if (track) {
