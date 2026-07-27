@@ -1712,7 +1712,7 @@ body {
     <div class="save-popup-check">✓</div>
     <div class="save-popup-title">Your design is saved!</div>
     <div class="save-popup-sub">Check your inbox for the link.</div>
-    <div class="save-popup-sub">Don't see it? Check your spam folder.</div>
+    <div class="save-popup-sub">Don't see it? Check your Promotions tab.</div>
   </div>
 </div>
 
@@ -3871,7 +3871,7 @@ function showSavePopup() {
   closeOv();   // never show the save overlay and popup at the same time
   document.getElementById('save-popup').classList.add('open');
   clearTimeout(savePopupTimer);
-  savePopupTimer = setTimeout(closeSavePopup, 6000);
+  savePopupTimer = setTimeout(closeSavePopup, 10000);
 }
 function closeSavePopup() {
   clearTimeout(savePopupTimer);
